@@ -119,7 +119,7 @@ function ConsulterStock() {
             field: 'livreur',
             headerName: 'Livreur',
             width: 200,
-            renderCell: (params) => <CustomLivreurCell value={params.value}/>, // Use the CustomLivreurCell component
+            renderCell: (params) => <CustomLivreurCell value={params.value}/>,
         },
         {field: 'retourCount', headerName: 'RetourCount', width: 200},
     ];

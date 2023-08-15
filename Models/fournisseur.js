@@ -10,6 +10,10 @@ const fournisseurSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    numero: {
+        type: Number,
+        required: true
+    },
     adresse: {
         type: String,
         required: true

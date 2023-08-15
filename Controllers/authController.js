@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const Magasinier = require('../Models/magasinier');
 const livreurModel = require('../Models/livreur');
-const fournisseurModel = require('../Models/fournisseur');
+const chefAgenceModel = require('../Models/chefAgence');
 const User = require('../Models/user');
 const jwt = require('jsonwebtoken');
 const {jwtSecret} = require("../config");
@@ -9,6 +9,12 @@ const {jwtSecret} = require("../config");
 exports.register = async (req, res) => {
     try {
         const { username, password, role, agence, ...roleData } = req.body;
+
+        // Check if the username already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Username already exists' });
+        }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,10 +34,13 @@ exports.register = async (req, res) => {
         let newRoleUser;
         switch (role) {
             case 'magasinier':
-                newRoleUser = new Magasinier({ userId: savedUser._id, agence:savedUser.agence, ...roleData });
+                newRoleUser = new Magasinier({ userId: savedUser._id, agence: savedUser.agence, ...roleData });
                 break;
             case 'livreur':
-                newRoleUser = new livreurModel({ userId: savedUser._id, agence:savedUser.agence, ...roleData });
+                newRoleUser = new livreurModel({ userId: savedUser._id, agence: savedUser.agence, ...roleData });
+                break;
+            case 'chefAgence':
+                newRoleUser = new chefAgenceModel({ userId: savedUser._id, agence: savedUser.agence, ...roleData });
                 break;
             // Add cases for other roles
             default:
@@ -47,6 +56,7 @@ exports.register = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 
@@ -85,13 +95,9 @@ exports.welcome = async (req, res) => {
 
         // Verify the token and retrieve the payload
         const decodedToken = jwt.verify(token, jwtSecret);
-        console.log('decodedToken : ',decodedToken);
         const { username } = decodedToken;
-        console.log('username : ',username);
-
         // Display a welcome message with the username
         const welcomeMessage = `Welcome, ${username}!`;
-
         res.status(200).json({ message: welcomeMessage });
     } catch (error) {
         console.error('Error during welcome:', error);

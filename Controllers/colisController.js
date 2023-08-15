@@ -1,9 +1,7 @@
 const colisModel = require('../Models/colis');
-const Agence = require('../Models/agence');
-const Magasinier = require('../Models/magasinier');
+const fournisseurModel = require('../models/fournisseur');
 const livreurModel = require('../Models/livreur');
 const Stock = require('../Models/stock');
-const User = require('../Models/user');
 const twilio = require('twilio');
 const jwt = require('jsonwebtoken');
 const {jwtSecret} = require(".././config");
@@ -151,7 +149,6 @@ exports.ajouterColisAuStock = async (req, res) => {
         res.status(400).json({error});
     }
 };
-
 exports.attribuerColisAuLivreur = async (req, res) => {
     try {
         // Step 1: Verify the existence of the selected livreur.
@@ -219,7 +216,6 @@ exports.attribuerColisAuLivreur = async (req, res) => {
 exports.retourColisAuStock = async (req, res) => {
     try {
         const {id} = req.body;
-        console.log("id colis = ", id);
         const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
         const stock = await Stock.findOne({agence: agenceId});
 
@@ -348,4 +344,106 @@ exports.pickUpColis = async (req, res) => {
         return res.status(500).json({error: 'Internal server error'});
     }
 };
+exports.calculateTotalAmountForLivreur = async (req, res) => {
+    try {
+        // Get the token from the request headers
+        const token = req.headers['x-access-token'];
+
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Verify the token and retrieve the payload
+        const decodedToken = jwt.verify(token, jwtSecret);
+
+        // Access the user ID from the decodedToken
+        const userId = decodedToken.userId;
+        const livreur = await livreurModel.findOne({ userId });
+
+        // Find all "livré" colis for the specific livreur
+        const livresColis = await colisModel.find({ livreur: livreur.id, status: 'livré' });
+
+        // Calculate the total amount considering different pricing based on retourCount
+        let totalAmount = 0;
+        livresColis.forEach(colis => {
+            if (colis.retourCount === 0) {
+                totalAmount += colis.prix + 7; // Add 7 Dinar for retourCount = 0
+            } else {
+                totalAmount += colis.prix + (colis.retourCount * 5); // Add (retourCount * 5) Dinar for retourCount != 0
+            }
+        });
+
+        res.status(200).json({ totalAmount });
+    } catch (error) {
+        console.error('Error calculating total amount for livreur:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+exports.getLivreurLivredColis = async (req, res) => {
+    try {
+        // Get the token from the request headers
+        const token = req.headers['x-access-token'];
+
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Verify the token and retrieve the payload
+        const decodedToken = jwt.verify(token, jwtSecret);
+
+        // Access the user ID from the decodedToken
+        const userId = decodedToken.userId;
+        const livreur = await livreurModel.findOne({ userId });
+
+        // Find all "livré" colis for the specific livreur
+        const livresColis = await colisModel.find({ livreur: livreur.id, status: 'livré' });
+
+        res.status(200).json(livresColis);
+    } catch (error) {
+        console.error('Error fetching livreur livré colis:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+exports.getColisEnAttenteForLivreur = async (req, res) => {
+    try {
+        // Get the token from the request headers
+        const token = req.headers['x-access-token'];
+
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Verify the token and retrieve the payload
+        const decodedToken = jwt.verify(token, jwtSecret);
+
+        // Access the user ID from the decodedToken
+        const userId = decodedToken.userId;
+        const livreur = await livreurModel.findOne({ userId });
+
+        // Find all "en attente" colis for the specific livreur to pick up
+        const enAttenteColis = await colisModel.find({ livreurPickup: livreur.id, status: 'en attente' });
+
+        // Map and populate Fournisseur information for each colis
+        const colisWithFournisseurInfo = await Promise.all(enAttenteColis.map(async (colis) => {
+            const fournisseur = await fournisseurModel.findById(colis.fournisseur);
+
+            return {
+                ...colis.toObject(),
+                fournisseur: {
+                    nom: fournisseur ? fournisseur.nom : '',
+                    adresse: fournisseur ? fournisseur.adresse : '',
+                    numero: fournisseur ? fournisseur.numero : '',
+
+                },
+            };
+        }));
+        res.status(200).json(colisWithFournisseurInfo);
+    } catch (error) {
+        console.error('Error fetching colis en attente for livreur:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
 

@@ -20,6 +20,12 @@ router.get('/getAllColisEnStock',  authenticateToken,colisController.getAllColis
 router.post('/ajouterColisAuStock',  authenticateToken,colisController.ajouterColisAuStock);//
 router.post('/attribuerColis',  authenticateToken,colisController.attribuerColisAuLivreur);//
 router.get('/getStockColis', authenticateToken,colisController.getAllColisFromStock);///
+router.get('/LivreurAmount', authenticateToken,colisController.calculateTotalAmountForLivreur);///
+router.get('/LivreurColisLivre', authenticateToken,colisController.getLivreurLivredColis);///
+router.get('/getColisEnAttenteForLivreur', authenticateToken,colisController.getColisEnAttenteForLivreur);///
+
+
+
 
 
 // livreur

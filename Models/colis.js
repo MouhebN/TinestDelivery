@@ -4,7 +4,7 @@ const colisSchema = new mongoose.Schema(
         fournisseur: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Fournisseur',
-            required: false
+            required: true
         },
         destination: {
             type: String,
