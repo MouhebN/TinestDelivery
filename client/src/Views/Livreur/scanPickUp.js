@@ -28,7 +28,7 @@ function ScanPickup() {
                 if (match) {
                     const jsonData = match[0];
                     const parsedData = JSON.parse(jsonData);
-                    await enqueueSnackbar('payement colis en cours...', {variant: 'info'});
+                    await enqueueSnackbar('pickup colis en cours...', {variant: 'info'});
 
                     axios
                         .post('http://localhost:3000/scanPickup',

@@ -11,6 +11,7 @@ import PaymentColisClient from "./Views/Livreur/paiement";
 import RetourAuFournisseurColis from "./Views/Livreur/retourFournisseur";
 import ScanPickup from "./Views/Livreur/scanPickUp";
 import SignInSide from "./Views/Login/logIn";
+import GetLivreurAmount from "./Views/ChefAgence/LivreurAmount";
 
 
 const theme = createTheme({
@@ -54,6 +55,12 @@ function App() {
                             path="/login"
                             element={<SignInSide setUserRoleFromToken={setUserRoleFromToken} />}
                         />
+                        {userRole === 'chefAgence' && (
+                            <>
+                                <Route path="/getLivreurLivredColis" element={<GetLivreurAmount />} />
+
+                            </>
+                        )}
                         {userRole === 'magasinier' && (
                             <>
                                 <Route path="/ajouterColisAuStock" element={<AjoutColis />} />

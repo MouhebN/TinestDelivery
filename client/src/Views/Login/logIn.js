@@ -53,8 +53,10 @@ export default function SignInSide({ setUserRoleFromToken }) {
                     window.location.href = '/ajouterColisAuStock';
                 } else if (data.role === 'livreur') {
                     window.location.href = '/payementColis';
-                } else {
-                    window.location.href = '/';
+                } else if (data.role === 'chefAgence') {
+                    window.location.href = '/getLivreurLivredColis';
+                }else {
+                    window.location.href = '/login';
                 }
             } else {
                 setShakeAnimation(true);

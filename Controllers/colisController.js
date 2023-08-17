@@ -17,7 +17,7 @@ exports.ajouterColis = (req, res) => {
         prenomClient: req.body.prenomClient,
         livreur: req.body.livreur,
         status: req.body.status,
-        date_creation: req.body.date_creation,
+        date_creation: Date.now(),
         prix: req.body.prix,
         typeDePayment: req.body.typeDePayment,
         largeur: req.body.largeur,
@@ -83,6 +83,7 @@ exports.listerColis = (req, res) => {
 };
 exports.listerLivreurAgence = async (req, res) => {
     const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
+    console.log("agenceID  : ",agenceId);
     livreurModel.find({agence: agenceId})
         .then((livreurList) => {
             res.status(200).json({livreurList});
@@ -154,7 +155,6 @@ exports.attribuerColisAuLivreur = async (req, res) => {
         // Step 1: Verify the existence of the selected livreur.
         const {livreurId, id, numeroClient} = req.body;
         const livreur = await livreurModel.findById(livreurId);
-
         const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
         const stock = await Stock.findOne({agence: agenceId});
 
@@ -444,6 +444,17 @@ exports.getColisEnAttenteForLivreur = async (req, res) => {
     }
 };
 
+exports.updateColisStatus = async (req, res) => {
+    try {
+        const { colisIds } = req.body; // Assuming you're passing an array of colis IDs in the request body
+        // Update the status of multiple colis to "livré et payé"
+        await colisModel.updateMany({ _id: { $in: colisIds } }, { status: 'livré et payé' });
 
+        res.status(200).json({ message: 'Colis statuses updated successfully' });
+    } catch (error) {
+        console.error('Error updating colis statuses:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 

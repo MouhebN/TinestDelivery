@@ -23,7 +23,7 @@ router.get('/getStockColis', authenticateToken,colisController.getAllColisFromSt
 router.get('/LivreurAmount', authenticateToken,colisController.calculateTotalAmountForLivreur);///
 router.get('/LivreurColisLivre', authenticateToken,colisController.getLivreurLivredColis);///
 router.get('/getColisEnAttenteForLivreur', authenticateToken,colisController.getColisEnAttenteForLivreur);///
-
+router.put('/updateColisStatus', colisController.updateColisStatus);
 
 
 

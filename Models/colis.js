@@ -31,7 +31,7 @@ const colisSchema = new mongoose.Schema(
             type: String,
             enum: ['en attente', 'en stock', 'en cours', 'retour en stock', 'livré', 'en pickup',
                 'annulé', 'retour au fournisseur', 'livré et payé', 'payé'],
-            required: false
+            required: true
         },
         retourCount: {
             type: Number,

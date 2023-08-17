@@ -11,7 +11,8 @@ const port = 3000;
 
 app.use(express.json());
 app.use(cors());
-
+const chefAgenceRoute = require('./Routes/chefAgence');
+app.use('', chefAgenceRoute);
 
 const colisRoute = require('./Routes/colis.js');
 app.use('', colisRoute);
