@@ -88,6 +88,10 @@ const colisSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Livreur',
             required: false
+        },   agence: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Agence',
+            required: true
         }
     }
 )

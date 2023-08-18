@@ -35,7 +35,6 @@ exports.ajouterColis = (req, res) => {
             res.status(400).json({error});
         });
 };
-
 exports.modifierColis = (req, res) => {
     const colisId = req.params.id;
     const modifiedColis = {
@@ -111,7 +110,6 @@ exports.ajouterColisAuStock = async (req, res) => {
             hauteur,
             typeColis
         } = req.body;
-        console.log("nom et prenom client : ",nomClient,prenomClient)
 
         // Check if a colis with the same _id already exists in the stock
         const existingColis = stock.colis.find((colis) => colis._id.toString() === id);
@@ -142,7 +140,6 @@ exports.ajouterColisAuStock = async (req, res) => {
 
         // Save the updated stock
         const updatedStock = await stock.save();
-
         colisModel.findByIdAndUpdate(id, newColis);
 
         res.status(200).json({message: 'Colis ajouté au stock avec succès', updatedStock});
