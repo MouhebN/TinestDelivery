@@ -22,7 +22,10 @@ exports.ajouterColis = (req, res) => {
         typeDePayment: req.body.typeDePayment,
         largeur: req.body.largeur,
         hauteur: req.body.hauteur,
-        typeColis: req.body.typeColis
+        typeColis: req.body.typeColis,
+        livreurPickup:req.body.livreurPickup,
+        agence:req.body.agence
+
     };
 
     const colis = new colisModel(colisObj);
@@ -50,7 +53,9 @@ exports.modifierColis = (req, res) => {
         typeDePayment: req.body.typeDePayment,
         largeur: req.body.largeur,
         hauteur: req.body.hauteur,
-        typeColis: req.body.typeColis
+        typeColis: req.body.typeColis,
+        livreurPickup:req.body.livreurPickup,
+        agence:req.body.agence
     };
 
     colisModel.findByIdAndUpdate(colisId, modifiedColis)

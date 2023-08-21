@@ -57,7 +57,8 @@ exports.getColisEnAttente = async (req, res) => {
         // Use Mongoose's .find() method to query the database
         const colisEnAttente = await colisModel.find({
             status: 'en attente',
-            agence: agenceId
+            agence: agenceId,
+            livreurPickup: { $exists: false }
         });
         const colisWithFournisseurInfo = await Promise.all(colisEnAttente.map(async (colis) => {
             const fournisseur = await fournisseurModel.findById(colis.fournisseur);
