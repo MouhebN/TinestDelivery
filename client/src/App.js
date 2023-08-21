@@ -5,28 +5,19 @@ import AttribuerColisAuLivreur from "./Views/Magasinier/attribuerColisAuLivreur"
 import AjoutColis from "./Views/Magasinier/ajoutColisScan";
 import RetourColisAuStock from "./Views/Magasinier/retourColisAuStock";
 import ConsulterStock from "./Views/Magasinier/consulterStock";
-import {createTheme, ThemeProvider} from '@mui/material/styles';
 import ConsulterColis from "./Views/Livreur/consulterColis";
 import PaymentColisClient from "./Views/Livreur/paiement";
 import RetourAuFournisseurColis from "./Views/Livreur/retourFournisseur";
 import ScanPickup from "./Views/Livreur/scanPickUp";
 import SignInSide from "./Views/Login/logIn";
 import GetLivreurAmount from "./Views/ChefAgence/LivreurAmount";
+import ConsulterColisChef from "./Views/ChefAgence/consulterColis";
+import ConsulterData from "./Views/ChefAgence/dataVisualization";
+import {ThemeProvider} from './Components/ThemeContext';
 
-
-const theme = createTheme({
-    palette: {
-        background: {
-            default: '#F9F9F9', // Replace with your desired default background color
-            paper: '#ffffff',   // Replace with your desired paper background color
-        },
-    },
-});
 
 function App() {
     const [userRole, setUserRole] = useState('');
-
-    // Retrieve token from local storage
     const token = localStorage.getItem('token');
 
     // Set the user's role based on the token
@@ -48,38 +39,39 @@ function App() {
 
     return (
         <>
-            <ThemeProvider theme={theme}>
                 <BrowserRouter>
                     <Routes>
                         <Route
                             path="/login"
-                            element={<SignInSide setUserRoleFromToken={setUserRoleFromToken} />}
+                            element={<SignInSide setUserRoleFromToken={setUserRoleFromToken}/>}
                         />
                         {userRole === 'chefAgence' && (
                             <>
-                                <Route path="/getLivreurLivredColis" element={<GetLivreurAmount />} />
+                                <Route path="/getLivreurLivredColis" element={<GetLivreurAmount/>}/>
+                                <Route path="/getColisEnAttente" element={<ConsulterColisChef/>}/>
+                                <Route path="/getData" element={<ConsulterData/>}/>
+
 
                             </>
                         )}
                         {userRole === 'magasinier' && (
                             <>
-                                <Route path="/ajouterColisAuStock" element={<AjoutColis />} />
-                                <Route path="/attribuerColis" element={<AttribuerColisAuLivreur />} />
-                                <Route path="/retournerColis" element={<RetourColisAuStock />} />
-                                <Route path="/getStockColis" element={<ConsulterStock />} />
+                                <Route path="/ajouterColisAuStock" element={<AjoutColis/>}/>
+                                <Route path="/attribuerColis" element={<AttribuerColisAuLivreur/>}/>
+                                <Route path="/retournerColis" element={<RetourColisAuStock/>}/>
+                                <Route path="/getStockColis" element={<ConsulterStock/>}/>
                             </>
                         )}
                         {userRole === 'livreur' && (
                             <>
-                                <Route path="/getLivreurColis" element={<ConsulterColis />} />
-                                <Route path="/payementColis" element={<PaymentColisClient />} />
-                                <Route path="/retourAuFournisseur" element={<RetourAuFournisseurColis />} />
-                                <Route path="/scanPickup" element={<ScanPickup />} />
+                                <Route path="/getLivreurColis" element={<ConsulterColis/>}/>
+                                <Route path="/payementColis" element={<PaymentColisClient/>}/>
+                                <Route path="/retourAuFournisseur" element={<RetourAuFournisseurColis/>}/>
+                                <Route path="/scanPickup" element={<ScanPickup/>}/>
                             </>
                         )}
                     </Routes>
                 </BrowserRouter>
-            </ThemeProvider>
         </>
     );
 }

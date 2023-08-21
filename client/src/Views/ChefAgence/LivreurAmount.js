@@ -71,7 +71,6 @@ function GetLivreurAmount() {
             enqueueSnackbar('Error approving livreur livred colis', { variant: 'error' });
         }
     };
-
     const columns = [
         { field: 'id', headerName: 'ID COlis', width: 180 },
         {

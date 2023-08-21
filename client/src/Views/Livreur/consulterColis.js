@@ -12,6 +12,7 @@ import {FaBox} from "react-icons/fa";
 import PayedAnimation from "../../Components/payedAnimation";
 import {FcMoneyTransfer} from "react-icons/fc";
 import ColisEnAttenteLivreur from "../../Components/colisEnAttenteLivreur";
+import {Tooltip} from "@mui/material";
 
 const constructGoogleMapsUrl = (address) => {
     const encodedAddress = encodeURIComponent(address);
@@ -106,14 +107,20 @@ function ConsulterColis() {
             width: 150,
             renderCell: (params) => {
                 const status = params.value;
+                let icon;
                 {
-                    return <PayedAnimation/>;
+                    icon = <PayedAnimation/>;
                 }
-            }
+                return (
+                    <Tooltip title={status} placement="top"> {/* Add a tooltip with the status */}
+                        <Box sx={{display: 'flex', alignItems: 'center'}}>
+                            {icon}
+                        </Box>
+                    </Tooltip>
+                );
+            },
         },
         {field: 'retourCount', headerName: 'RetourCount', width: 100},
-
-
     ];
     const columns = [
         {
@@ -145,10 +152,18 @@ function ConsulterColis() {
             width: 150,
             renderCell: (params) => {
                 const status = params.value;
+                let icon ;
                 {
-                    return <MyLottieAnimation/>;
+                    icon = <MyLottieAnimation/>;
                 }
-            }
+                return (
+                    <Tooltip title={status} placement="top"> {/* Add a tooltip with the status */}
+                        <Box sx={{display: 'flex', alignItems: 'center'}}>
+                            {icon}
+                        </Box>
+                    </Tooltip>
+                );
+            },
         },
         {field: 'retourCount', headerName: 'RetourCount', width: 200},
     ];

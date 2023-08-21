@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {styled} from "@mui/material/styles";
-import {darken, Grid, lighten} from "@mui/material";
+import {darken, lighten, Tooltip} from "@mui/material";
 import ColisEnStockCount from "../../Components/ColisEnStockCount";
 import ColisEnCoursCount from "../../Components/ColisEnCourCount";
 import ColisEnRetourCount from "../../Components/ColisRetourEnStock";
@@ -15,6 +15,8 @@ import CancelledAnimation from "../../Components/CancelledAnimation";
 import RetourAnimation from "../../Components/RetourEnStockAnimation";
 import LoadingAnimation from "../../Components/LoadingAnimation";
 import MiniDrawerMagasinier from "../../Layouts/sideBarMagasinier";
+import ReadyAnimation from "../../Components/ReadyAnimation";
+import PayedAnimation from "../../Components/payedAnimation";
 
 const StyledDataGrid = styled(DataGrid)(({theme}) => ({
     '& .super-app-theme--en-stock': {
@@ -100,19 +102,29 @@ function ConsulterStock() {
             width: 150,
             renderCell: (params) => {
                 const status = params.value;
+                let icon = null;
                 if (status === 'en stock') {
-                    return <StockAnimation/>;
+                    icon = <StockAnimation/>;
                 } else if (status === 'en cours') {
-                    return <MyLottieAnimation/>;
+                    icon = <MyLottieAnimation/>;
                 } else if (status === 'retour en stock') {
-                    return <RetourAnimation/>;
+                    icon = <RetourAnimation/>;
                 } else if (status === 'payé') {
-                    return <DoneAnimation/>;
+                    icon= <DoneAnimation/>;
                 } else if (status === 'annulé') {
-                    return <CancelledAnimation/>;
+                    icon = <CancelledAnimation/>;
+                } else if (status === 'livré et payé') {
+                    icon = <PayedAnimation/>;
                 } else {
-                    return null;
+                    return status;
                 }
+                return (
+                    <Tooltip title={status} placement="top"> {/* Add a tooltip with the status */}
+                        <Box sx={{display: 'flex', alignItems: 'center'}}>
+                            {icon}
+                        </Box>
+                    </Tooltip>
+                );
             },
         },
         {

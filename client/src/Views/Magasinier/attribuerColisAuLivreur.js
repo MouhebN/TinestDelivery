@@ -9,12 +9,15 @@ import {DataGrid} from "@mui/x-data-grid";
 import {useEffect} from "react";
 import StockAnimation from "../../Components/StockAnimation";
 import MiniDrawerMagasinier from "../../Layouts/sideBarMagasinier";
+import ReadyAnimation from "../../Components/ReadyAnimation";
+import {Tooltip} from "@mui/material";
 
 
 function AttribuerColisAuLivreur() {
     const getAuthorizedHeaders = () => ({
         headers: {
-            "x-access-token": localStorage.getItem('token')        }
+            "x-access-token": localStorage.getItem('token')
+        }
     });
     const {enqueueSnackbar} = useSnackbar();
     const [showScanner, setShowScanner] = useState(false);
@@ -36,8 +39,8 @@ function AttribuerColisAuLivreur() {
                 .post('http://localhost:3000/attribuerColis', {
                     livreurId: livreurId,
                     id: colisId,
-                    numeroClient : numero
-                },getAuthorizedHeaders())
+                    numeroClient: numero
+                }, getAuthorizedHeaders())
                 .then((response) => {
                     console.log('Livreur updated:', response.data);
                     enqueueSnackbar('Colis added to livreur successfully', {variant: 'success'});
@@ -66,16 +69,26 @@ function AttribuerColisAuLivreur() {
             width: 150,
             renderCell: (params) => {
                 const status = params.value;
+                let icon = null;
                 {
-                    return <StockAnimation />;
-                }}},
+                    icon = <StockAnimation/>;
+                }
+                return (
+                    <Tooltip title={status} placement="top"> {/* Add a tooltip with the status */}
+                        <Box sx={{display: 'flex', alignItems: 'center'}}>
+                            {icon}
+                        </Box>
+                    </Tooltip>
+                );
+            },
+        },
         {field: 'retourCount', headerName: 'RetourCount', width: 200},
     ];
     useEffect(() => {
         console.log('Fetching data from the backend API...');
         // Fetch data from the backend API
         axios
-            .get('http://localhost:3000/getAllColisEnStock',getAuthorizedHeaders()) // Replace with your backend API endpoint
+            .get('http://localhost:3000/getAllColisEnStock', getAuthorizedHeaders()) // Replace with your backend API endpoint
             .then((response) => {
                 const updatedRows = response.data;
                 setRows(updatedRows);
@@ -88,31 +101,31 @@ function AttribuerColisAuLivreur() {
     return (
         <>
             <MiniDrawerMagasinier/>
-            <Box sx={{  marginLeft :60}}>
-                <LivreurSelector onLivreurSelect={handleLivreurSelect} />
+            <Box sx={{marginLeft: 60}}>
+                <LivreurSelector onLivreurSelect={handleLivreurSelect}/>
             </Box>
-        <div  style={{height: '100vh', overflow: 'auto'}}>
-            {selectedLivreur && showScanner && (
-                <Box
-                    component="span"
-                    sx={{
-                        height: 400,
-                        position: "static",
-                        top: 20, // Adjust the top position to add padding
-                        left: 50, // Adjust the left position for horizontal alignment
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: 700,
-                        borderRadius: '16px',
-                        borderColor: 'error.main',
-                        overflow: 'auto',
-                        boxShadow:3,
+            <div style={{height: '100vh', overflow: 'auto'}}>
+                {selectedLivreur && showScanner && (
+                    <Box
+                        component="span"
+                        sx={{
+                            height: 400,
+                            position: "static",
+                            top: 20, // Adjust the top position to add padding
+                            left: 50, // Adjust the left position for horizontal alignment
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 700,
+                            borderRadius: '16px',
+                            borderColor: 'error.main',
+                            overflow: 'auto',
+                            boxShadow: 3,
 
-                    }}
-                >
+                        }}
+                    >
                         <BarcodeScanner onScan={debouncedhandleQRcodeScan}/>
-                </Box>
-            )}
+                    </Box>
+                )}
 
                 <Box sx={{
                     position: 'static',
@@ -123,9 +136,9 @@ function AttribuerColisAuLivreur() {
                     overflow: 'auto',
                     padding: '20px',
                     margin: '30px',
-                    marginLeft : '250px',
-                    backgroundColor : '#F5F5F5',
-                    boxShadow:8,
+                    marginLeft: '250px',
+                    backgroundColor: '#F5F5F5',
+                    boxShadow: 8,
 
 
                 }}>
@@ -136,7 +149,7 @@ function AttribuerColisAuLivreur() {
                         getRowId={(row) => row._id}
                     />
                 </Box>
-        </div>
+            </div>
         </>
     );
 

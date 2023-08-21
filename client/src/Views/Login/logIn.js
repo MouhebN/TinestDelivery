@@ -54,7 +54,7 @@ export default function SignInSide({ setUserRoleFromToken }) {
                 } else if (data.role === 'livreur') {
                     window.location.href = '/payementColis';
                 } else if (data.role === 'chefAgence') {
-                    window.location.href = '/getLivreurLivredColis';
+                    window.location.href = '/getData';
                 }else {
                     window.location.href = '/login';
                 }

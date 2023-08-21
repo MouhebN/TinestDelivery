@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {BarcodeScanner} from '../../Components/BarcodeScanner';
 import axios from 'axios';
 import debounce from 'lodash.debounce';

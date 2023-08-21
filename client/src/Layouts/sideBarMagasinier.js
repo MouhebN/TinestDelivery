@@ -16,18 +16,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
 import {Link} from 'react-router-dom';
 import {CiDeliveryTruck} from "react-icons/ci";
 import {IoAddSharp} from "react-icons/io5";
 import {TbTruckReturn} from "react-icons/tb";
 import {FcDataSheet} from "react-icons/fc";
 import Avatar from '@mui/material/Avatar';
-import {lightBlue} from "@mui/material/colors";
-import {dark} from "@mui/material/styles/createPalette";
-import {Button, Container} from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import WelcomeComponent from "../Components/welcome";
+import {useState} from "react";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const drawerWidth = 240;
 
@@ -100,6 +99,10 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 export default function MiniDrawerMagasinier() {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const [darkMode, setDarkMode] = useState(false);
+    const handleToggleDarkMode = () => {
+        setDarkMode(!darkMode);
+    };
     const handleLogout = () => {
         // Clear the token from localStorage
         localStorage.removeItem('token');
@@ -116,7 +119,15 @@ export default function MiniDrawerMagasinier() {
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <AppBar position="fixed" open={open} sx={{backgroundColor: '#D6E8DB', color: '#0C134F', opacity: 0.8}}>
+            <AppBar
+                position="fixed"
+                open={open}
+                sx={{
+                    backgroundColor: darkMode ? '#333' : '#D6E8DB',
+                    color: darkMode ? 'white' : '#0C134F',
+                    opacity: 0.8,
+                }}
+            >
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -129,6 +140,14 @@ export default function MiniDrawerMagasinier() {
                         }}
                     >
                         <MenuIcon/>
+                        <IconButton
+                            color="inherit"
+                            aria-label="toggle dark mode"
+                            onClick={handleToggleDarkMode}
+                            sx={{ marginLeft: 'auto' }}
+                        >
+                            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+                        </IconButton>
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
                         Tinest Delivery
@@ -142,7 +161,14 @@ export default function MiniDrawerMagasinier() {
 
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={open}>
+            <Drawer
+                variant="permanent"
+                open={open}
+                sx={{
+                    backgroundColor: darkMode ? '#333' : 'white',
+                    color: darkMode ? 'white' : 'black',
+                }}
+            >
                 <DrawerHeader sx={{backgroundColor: '#D6E8DB', color: '#0C134F'}}>
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon/>}

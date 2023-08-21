@@ -5,9 +5,16 @@ import {DataGrid} from '@mui/x-data-grid';
 import MapAnimation from "./MapAnimation";
 import Typography from "@mui/material/Typography";
 import ReadyAnimation from "./ReadyAnimation";
+import StockAnimation from "./StockAnimation";
+import MyLottieAnimation from "./CarAnimation";
+import RetourAnimation from "./RetourEnStockAnimation";
+import DoneAnimation from "./DoneAnimation";
+import CancelledAnimation from "./CancelledAnimation";
+import PayedAnimation from "./payedAnimation";
+import PickupAnimation from "./EnpickUpAnimation";
 import {Tooltip} from "@mui/material";
 
-function ColisEnAttenteLivreur() {
+function ColisEnAttenteChef() {
     const constructGoogleMapsUrl = (address) => {
         const encodedAddress = encodeURIComponent(address);
         return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
@@ -15,9 +22,8 @@ function ColisEnAttenteLivreur() {
     const [enAttenteColis, setEnAttenteColis] = useState([]);
 
     useEffect(() => {
-        console.log('Fetching "en attente" colis from the backend API...');
         axios
-            .get('http://localhost:3000/getColisEnAttenteForLivreur', {
+            .get('http://localhost:3000/getColisEnAttente', {
                 headers: {
                     'x-access-token': localStorage.getItem('token'),
                 },
@@ -35,11 +41,12 @@ function ColisEnAttenteLivreur() {
                     };
                 });
                 setEnAttenteColis(transformedResponse);
+                console.log("transformedResponse",transformedResponse);
             })
             .catch((error) => {
                 console.error('Error fetching "en attente" colis:', error);
             });
-    }, []);  // Empty dependency array means this effect runs only once on mount
+    }, []);
 
     const columns = [
         {
@@ -51,7 +58,7 @@ function ColisEnAttenteLivreur() {
                 if (fournisseur) {
                     return `${fournisseur.adresse}`;
                 }
-                },
+            },
             renderCell: (params) => {
                 const address = params.value;
                 return (
@@ -92,7 +99,7 @@ function ColisEnAttenteLivreur() {
             },
         },
         {field: 'date_creation', headerName: 'date creation', width: 150},
-        {field: 'typeColis', headerName: 'typeColis', width: 150},
+        {field: 'destination', headerName: 'Destination client', width: 180},
         {
             field: 'status',
             headerName: 'Status',
@@ -116,6 +123,7 @@ function ColisEnAttenteLivreur() {
 
     ];
 
+
     return (
         <Box sx={{
             position: 'static', marginLeft: '259px', overflow: 'auto', height: 500,
@@ -126,5 +134,4 @@ function ColisEnAttenteLivreur() {
     );
 }
 
-export default ColisEnAttenteLivreur;
-
+export default ColisEnAttenteChef;
