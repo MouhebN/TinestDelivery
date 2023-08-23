@@ -7,7 +7,6 @@ const getAgenceIdFromToken = async (token) => {
         if (!token) {
             console.log('Token is required',Error);
         }
-
         // Verify the token and retrieve the payload
         const decodedToken = jwt.verify(token, jwtSecret);
 
@@ -20,7 +19,6 @@ const getAgenceIdFromToken = async (token) => {
         if (!user) {
             console.log('User not found',Error);
         }
-
         // Retrieve the agence ID from the user document
         return user.agence;
     } catch (error) {

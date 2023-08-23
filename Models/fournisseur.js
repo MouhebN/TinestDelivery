@@ -10,7 +10,7 @@ const fournisseurSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    numero: {
+    telephone: {
         type: Number,
         required: true
     },

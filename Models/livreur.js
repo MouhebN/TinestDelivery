@@ -29,7 +29,7 @@ const livreurSchema = new mongoose.Schema({
     },
     matricule_voiture: {
         type: String,
-        required: false
+        required: true
     },
     telephone: {
         type: String,

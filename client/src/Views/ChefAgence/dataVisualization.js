@@ -21,7 +21,6 @@ function ConsulterData() {
                 </Grid>
             </Box>
             <Divider sx={{ my: 3 }} />
-
             <Box sx={{padding: '20px', marginLeft: '5%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Box sx={{padding: '30px', width: '60%', marginRight: '15px',boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
                     <ColisVolumeByFournisseurChart />
@@ -44,7 +43,6 @@ function ConsulterData() {
                 <Box sx={{ padding: '30px',width: '60%', marginRight: '15px' ,boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
                     <TopLivreurChart />
                 </Box>
-
             </Box >
         </>
     );

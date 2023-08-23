@@ -171,7 +171,7 @@ export default function MiniDrawerChefAgence() {
                 </DrawerHeader>
                 <Divider/>
                 <List>
-                    {['Livreur Debt', 'consulter Colis', 'Data', 'Scan Pickup'].map((text, index) => (
+                    {['Livreur Debt', 'consulter Colis', 'Data', 'Ajouter Compte'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{display: 'block'}}>
                             <ListItemButton component={Link} to={
                                 text === '' +
@@ -181,8 +181,8 @@ export default function MiniDrawerChefAgence() {
                                         ? '/getColisEnAttente'
                                         : text === 'Data'
                                             ? '/getData'
-                                            : text === 'Scan Pickup'
-                                                ? '/getLivreurLivredColis'
+                                            : text === 'Ajouter Compte'
+                                                ? '/signUp'
 
                                                 : '/getLivreurLivredColis'
                             }

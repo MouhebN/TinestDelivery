@@ -13,7 +13,7 @@ import SignInSide from "./Views/Login/logIn";
 import GetLivreurAmount from "./Views/ChefAgence/LivreurAmount";
 import ConsulterColisChef from "./Views/ChefAgence/consulterColis";
 import ConsulterData from "./Views/ChefAgence/dataVisualization";
-import {ThemeProvider} from './Components/ThemeContext';
+import SignUp from "./Views/ChefAgence/ajouterCompte";
 
 
 function App() {
@@ -39,6 +39,7 @@ function App() {
 
     return (
         <>
+
                 <BrowserRouter>
                     <Routes>
                         <Route
@@ -50,8 +51,7 @@ function App() {
                                 <Route path="/getLivreurLivredColis" element={<GetLivreurAmount/>}/>
                                 <Route path="/getColisEnAttente" element={<ConsulterColisChef/>}/>
                                 <Route path="/getData" element={<ConsulterData/>}/>
-
-
+                                <Route path="/signUp" element={<SignUp/>}/>
                             </>
                         )}
                         {userRole === 'magasinier' && (

@@ -28,7 +28,7 @@ const magasinierSchema = new mongoose.Schema({
         required: true
     },
     telephone: {
-        type: String,
+        type: Number,
         required: false
     }
 })
