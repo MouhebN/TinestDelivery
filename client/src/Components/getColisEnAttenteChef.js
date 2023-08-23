@@ -33,8 +33,8 @@ function ColisEnAttenteChef() {
                         id: colis._id,
                         fournisseur: {
                             nom: colis.fournisseur.nom,
-                            adresse: colis.fournisseur.adresse,
-                            numero: colis.fournisseur.numero,
+                            address: colis.fournisseur.address,
+                            telephone: colis.fournisseur.telephone,
                         },
                     };
                 });
@@ -53,7 +53,7 @@ function ColisEnAttenteChef() {
             valueGetter: (params) => {
                 const fournisseur = params.row.fournisseur;
                 if (fournisseur) {
-                    return `${fournisseur.adresse}`;
+                    return `${fournisseur.address}`;
                 }
             },
             renderCell: (params) => {
@@ -90,7 +90,7 @@ function ColisEnAttenteChef() {
             valueGetter: (params) => {
                 const fournisseur = params.row.fournisseur;
                 if (fournisseur) {
-                    return `${fournisseur.numero}`;
+                    return `${fournisseur.telephone}`;
                 }
                 return '';
             },

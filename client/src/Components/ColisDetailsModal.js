@@ -40,8 +40,8 @@ const ColisDetailsModal = ({ isOpen, onClose, colis }) => {
                             <div>
                                 <StyledDiv><strong>ID:</strong> {colis.id}</StyledDiv>
                                 <StyledDiv><strong>Fournisseur:</strong> {colis.fournisseur.nom}</StyledDiv>
-                                <StyledDiv><strong>Fournisseur Numero:</strong> {colis.fournisseur.numero}</StyledDiv>
-                                <StyledDiv><strong>Fournisseur Adresse:</strong> {colis.fournisseur.adresse}</StyledDiv>
+                                <StyledDiv><strong>Fournisseur Numero:</strong> {colis.fournisseur.telephone}</StyledDiv>
+                                <StyledDiv><strong>Fournisseur Adresse:</strong> {colis.fournisseur.address}</StyledDiv>
                                 <StyledDiv><strong>Destination:</strong> {colis.destination}</StyledDiv>
                                 <StyledDiv><strong>Num Client:</strong> {colis.num_client}</StyledDiv>
                                 <StyledDiv><strong>Nom Client:</strong> {colis.nomClient}</StyledDiv>

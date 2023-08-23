@@ -69,8 +69,9 @@ export default function SignUp() {
                 }
             );
 
-            if (response.status === 200) {
-                const data = response.data;
+            if (response.status === 201) {
+                const data = response.data
+                console.log("Account added succesfully");
                 enqueueSnackbar('Account added succesfully', {variant: 'success'});
             }
         } catch (error) {

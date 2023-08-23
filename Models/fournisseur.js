@@ -14,7 +14,7 @@ const fournisseurSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    adresse: {
+    address: {
         type: String,
         required: true
     },

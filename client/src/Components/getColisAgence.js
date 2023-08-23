@@ -48,8 +48,8 @@ const ColisAgenceChef = () => {
                         id: colis._id,
                         fournisseur: {
                             nom: colis.fournisseur.nom,
-                            adresse: colis.fournisseur.adresse,
-                            numero: colis.fournisseur.numero,
+                            address: colis.fournisseur.address,
+                            telephone: colis.fournisseur.telephone,
                         },
                         livreur: {
                             nom: colis.livreur.nom,
@@ -101,7 +101,7 @@ const ColisAgenceChef = () => {
             valueGetter: (params) => {
                 const fournisseur = params.row.fournisseur;
                 if (fournisseur) {
-                    return `${fournisseur.numero}`;
+                    return `${fournisseur.telephone}`;
                 }
                 return '';
             },

@@ -23,5 +23,10 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: new Date(),
     },
+    etat: {
+        type: String,
+        enum :['accepted', 'not accepted','waiting'] ,
+        required: false
+    },
 })
 module.exports = mongoose.model('users', userSchema);

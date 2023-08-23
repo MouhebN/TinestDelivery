@@ -14,6 +14,9 @@ import GetLivreurAmount from "./Views/ChefAgence/LivreurAmount";
 import ConsulterColisChef from "./Views/ChefAgence/consulterColis";
 import ConsulterData from "./Views/ChefAgence/dataVisualization";
 import SignUp from "./Views/ChefAgence/ajouterCompte";
+import AjoutColisChef from "./Views/ChefAgence/ajouterAuStock";
+import AttribuerColisAuLivreurChef from "./Views/ChefAgence/attribuerColis";
+import RetourColisAuStockChef from "./Views/ChefAgence/scanRetour";
 
 
 function App() {
@@ -52,6 +55,9 @@ function App() {
                                 <Route path="/getColisEnAttente" element={<ConsulterColisChef/>}/>
                                 <Route path="/getData" element={<ConsulterData/>}/>
                                 <Route path="/signUp" element={<SignUp/>}/>
+                                <Route path="/ajouterColisAuStock" element={<AjoutColisChef/>}/>
+                                <Route path="/attribuerColis" element={<AttribuerColisAuLivreurChef/>}/>
+                                <Route path="/retournerColis" element={<RetourColisAuStockChef/>}/>
                             </>
                         )}
                         {userRole === 'magasinier' && (

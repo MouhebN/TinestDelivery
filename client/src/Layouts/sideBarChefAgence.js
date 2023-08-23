@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {styled} from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -17,18 +17,14 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import {Link} from 'react-router-dom';
-import {CiDeliveryTruck} from "react-icons/ci";
-import {TbTruckReturn} from "react-icons/tb";
 import Avatar from '@mui/material/Avatar';
-import {BiQrScan} from "react-icons/bi";
-import {MdAttachMoney} from "react-icons/md";
 import LogoutIcon from "@mui/icons-material/Logout";
 import WelcomeComponent from "../Components/welcome";
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import {lightTheme, darkTheme} from '../Components/themes';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState } from 'react';
+import {AiFillFileAdd, AiOutlineUsergroupAdd} from "react-icons/ai";
+import {BsClipboard2DataFill} from "react-icons/bs";
+import {FcAcceptDatabase, FcDebt} from "react-icons/fc";
+import {IoMdAddCircle} from "react-icons/io";
+import {TbTruckReturn} from "react-icons/tb";
 
 
 const drawerWidth = 240;
@@ -99,12 +95,8 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 );
 
 export default function MiniDrawerChefAgence() {
+    const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const [darkMode, setDarkMode] = useState(false);
-    const handleToggleDarkMode = () => {
-        setDarkMode(!darkMode);
-    };
-    const theme = createTheme(darkMode ? darkTheme : lightTheme);
     const handleLogout = () => {
         // Clear the token from localStorage
         localStorage.removeItem('token');
@@ -120,17 +112,9 @@ export default function MiniDrawerChefAgence() {
     };
 
     return (
-        <ThemeProvider theme={theme}>
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <AppBar
-                position="fixed"
-                open={open}
-                sx={{
-                    backgroundColor: darkMode ? '#333' : '#D6E8DB',
-                    color: darkMode ? 'white' : '#0C134F',
-                    opacity: 0.8,
-                }}
+            <AppBar position="fixed" open={open} sx={{backgroundColor: '#D6E8DB', color: '#0C134F', opacity: 0.8}}>
             >
                 <Toolbar>
                     <IconButton
@@ -144,14 +128,6 @@ export default function MiniDrawerChefAgence() {
                         }}
                     >
                         <MenuIcon/>
-                        <IconButton
-                            color="inherit"
-                            aria-label="toggle dark mode"
-                            onClick={handleToggleDarkMode}
-                            sx={{marginLeft: 'auto'}}
-                        >
-                            {darkMode ? <Brightness7Icon/> : <Brightness4Icon/>}
-                        </IconButton>
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
                         Tinest Delivery
@@ -200,8 +176,8 @@ export default function MiniDrawerChefAgence() {
                                         fontSize: '24px',
                                     }}
                                 >
-                                    {index % 4 === 0 ? <MdAttachMoney/> : index % 3 === 0 ?
-                                        <BiQrScan/> : index % 2 === 0 ? <TbTruckReturn/> : <CiDeliveryTruck/>}
+                                    {index % 4 === 0 ? <FcDebt/> : index % 3 === 0 ?
+                                        <AiOutlineUsergroupAdd/> : index % 2 === 0 ? <BsClipboard2DataFill/> : <FcAcceptDatabase/>}
 
 
                                 </ListItemIcon>
@@ -212,8 +188,45 @@ export default function MiniDrawerChefAgence() {
                 </List>
                 <Divider/>
                 <List>
-                    <ListItem disablePadding sx={{display: 'block'}}>
-                        <ListItemButton
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <List>
+                            {['ajouter au stock', 'scan retour', 'Atrribuer Colis', 'Ajouter Facture'].map((text, index) => (
+                                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                                    <ListItemButton
+                                        component={Link}
+                                        to={
+                                            text === 'ajouter au stock' ? '/ajouterColisAuStock' :
+                                                text === 'Atrribuer Colis' ? '/attribuerColis' :
+                                                    text === 'scan retour' ? '/retournerColis' :
+                                                        ''
+                                        }
+                                        sx={{
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            px: 2.5,
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : 'auto',
+                                                justifyContent: 'center',
+                                                fontSize: '24px',
+                                            }}
+                                        >
+                                            {index % 4 === 0 ? <IoMdAddCircle /> :
+                                                index % 3 === 0 ? <AiFillFileAdd /> :
+                                                    index % 2 === 0 ? <BsClipboard2DataFill /> :
+                                                        <TbTruckReturn />}
+                                        </ListItemIcon>
+                                        <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                </List>
+
+
+                <ListItemButton
                             sx={{
                                 minHeight: 48,
                                 justifyContent: open ? 'initial' : 'center',
@@ -240,6 +253,5 @@ export default function MiniDrawerChefAgence() {
                 <DrawerHeader/>
             </Box>
         </Box>
-        </ThemeProvider>
     );
 }

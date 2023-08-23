@@ -139,14 +139,12 @@ exports.ajouterColisAuStock = async (req, res) => {
             hauteur,
             typeColis,
         };
-
         // Update the stock's colis array with the new colis data
         stock.colis.push(newColis);
 
         // Save the updated stock
         const updatedStock = await stock.save();
         colisModel.findByIdAndUpdate(id, newColis);
-
         res.status(200).json({message: 'Colis ajouté au stock avec succès', updatedStock});
     } catch (error) {
         res.status(400).json({error});

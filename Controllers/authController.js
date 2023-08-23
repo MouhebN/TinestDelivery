@@ -28,8 +28,9 @@ exports.register = async (req, res) => {
             password: hashedPassword,
             role,
             agence,
-        });
+            etat: 'waiting',
 
+        });
         // Save the new user to the 'users' collection
         const savedUser = await newUser.save();
 
@@ -54,7 +55,6 @@ exports.register = async (req, res) => {
         }
         // Save the new user to the specific role collection
         await newRoleUser.save();
-
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         console.error('Error during registration:', error);
@@ -69,6 +69,9 @@ exports.login = async (req, res) => {
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(401).json({ error: 'Invalid username' });
+        }
+        if (user.etat === 'waiting' || user.etat === 'not accepted') {
+            return res.status(403).json({ error: 'Account not accepted or waiting for approval' });
         }
         // Compare the provided password with the hashed password
         const isPasswordMatch = await bcrypt.compare(password, user.password);

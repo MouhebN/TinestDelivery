@@ -29,8 +29,8 @@ function ColisEnAttenteLivreur() {
                         id: colis._id,
                         fournisseur: {
                             nom: colis.fournisseur.nom,
-                            adresse: colis.fournisseur.adresse,
-                            numero: colis.fournisseur.numero,
+                            address: colis.fournisseur.address,
+                            telephone: colis.fournisseur.telephone,
                         },
                     };
                 });
@@ -49,7 +49,7 @@ function ColisEnAttenteLivreur() {
             valueGetter: (params) => {
                 const fournisseur = params.row.fournisseur;
                 if (fournisseur) {
-                    return `${fournisseur.adresse}`;
+                    return `${fournisseur.address}`;
                 }
                 },
             renderCell: (params) => {
@@ -86,7 +86,7 @@ function ColisEnAttenteLivreur() {
             valueGetter: (params) => {
                 const fournisseur = params.row.fournisseur;
                 if (fournisseur) {
-                    return `${fournisseur.numero}`;
+                    return `${fournisseur.telephone}`;
                 }
                 return '';
             },
