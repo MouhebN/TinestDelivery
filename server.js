@@ -11,11 +11,14 @@ const port = 3000;
 
 app.use(express.json());
 app.use(cors());
+const factureRoute = require('./Routes/facture');
+app.use('', factureRoute);
 const chefAgenceRoute = require('./Routes/chefAgence');
 app.use('', chefAgenceRoute);
 
 const colisRoute = require('./Routes/colis.js');
 app.use('', colisRoute);
+
 const agenceRoute = require('./Routes/agence.js');
 app.use('', agenceRoute);
 

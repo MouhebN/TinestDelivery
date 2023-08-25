@@ -198,6 +198,7 @@ export default function MiniDrawerChefAgence() {
                                             text === 'ajouter au stock' ? '/ajouterColisAuStock' :
                                                 text === 'Atrribuer Colis' ? '/attribuerColis' :
                                                     text === 'scan retour' ? '/retournerColis' :
+                                                        text === 'Ajouter Facture' ? '/ajouterFacture' :
                                                         ''
                                         }
                                         sx={{

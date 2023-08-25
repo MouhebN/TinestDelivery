@@ -5,7 +5,6 @@ import React, {useState} from "react";
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import {useSnackbar} from "notistack";
-import MiniDrawerMagasinier from "../../Layouts/sideBarMagasinier";
 import MiniDrawerChefAgence from "../../Layouts/sideBarChefAgence";
 
 // eslint-disable-next-line

@@ -17,7 +17,8 @@ import SignUp from "./Views/ChefAgence/ajouterCompte";
 import AjoutColisChef from "./Views/ChefAgence/ajouterAuStock";
 import AttribuerColisAuLivreurChef from "./Views/ChefAgence/attribuerColis";
 import RetourColisAuStockChef from "./Views/ChefAgence/scanRetour";
-
+import Facture from "./Views/ChefAgence/facture";
+import ListFactures from "./Components/listerFacturesChef";
 
 function App() {
     const [userRole, setUserRole] = useState('');
@@ -58,6 +59,8 @@ function App() {
                                 <Route path="/ajouterColisAuStock" element={<AjoutColisChef/>}/>
                                 <Route path="/attribuerColis" element={<AttribuerColisAuLivreurChef/>}/>
                                 <Route path="/retournerColis" element={<RetourColisAuStockChef/>}/>
+                                <Route path="/ajouterFacture" element={<Facture/>}/>
+                                <Route path="/listFactures" component={ListFactures} />
                             </>
                         )}
                         {userRole === 'magasinier' && (
