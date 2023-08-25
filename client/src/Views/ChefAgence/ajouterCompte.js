@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -14,6 +13,10 @@ import axios from "axios";
 import MiniDrawerChefAgence from "../../Layouts/sideBarChefAgence";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import {SnackbarProvider, useSnackbar} from "notistack";
+import ErrorSound from '../../Utils/ErrorSound';
+import SuccessSound from '../../Utils/SuccesSound';
+
+
 
 
 const defaultTheme = createTheme();
@@ -31,6 +34,8 @@ export default function SignUp() {
     const [matriculeVoiture, setMatriculeVoiture] = useState('');
     const [address, setAddress] = useState('');
     const [isEmailValid, setIsEmailValid] = useState(true);
+    const [errorOccurred, setErrorOccurred] = useState(false);
+    const [successOccurred, setSuccessOccurred] = useState(false);
 
     const handleChange = (event) => {
         setSelectedRole(event.target.value);
@@ -72,16 +77,20 @@ export default function SignUp() {
             if (response.status === 201) {
                 const data = response.data
                 console.log("Account added succesfully");
+                setSuccessOccurred(true);
                 enqueueSnackbar('Account added succesfully', {variant: 'success'});
+
             }
         } catch (error) {
             console.error('Error during registration:', error);
-
             if (error.response && error.response.data && error.response.data.error) {
                 const errorMessage = error.response.data.error;
                 enqueueSnackbar(errorMessage, {variant: 'error'});
+                setErrorOccurred(true);
             } else {
                 enqueueSnackbar('Error during registration', {variant: 'error'});
+                setErrorOccurred(true);
+
             }
         }
     };
@@ -230,6 +239,8 @@ export default function SignUp() {
                 </Box>
             </Container>
         </ThemeProvider>
+            {errorOccurred && <ErrorSound playSound/>}
+            {successOccurred && <SuccessSound playSound />}
         </>
     );
 }

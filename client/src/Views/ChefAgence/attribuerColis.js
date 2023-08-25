@@ -8,10 +8,10 @@ import debounce from "lodash.debounce";
 import {DataGrid} from "@mui/x-data-grid";
 import {useEffect} from "react";
 import StockAnimation from "../../Components/StockAnimation";
-import MiniDrawerMagasinier from "../../Layouts/sideBarMagasinier";
-import ReadyAnimation from "../../Components/ReadyAnimation";
 import {Tooltip} from "@mui/material";
 import MiniDrawerChefAgence from "../../Layouts/sideBarChefAgence";
+import ErrorSound from "../../Utils/ErrorSound";
+import SuccessSound from "../../Utils/SuccesSound";
 
 
 function AttribuerColisAuLivreurChef() {
@@ -23,6 +23,22 @@ function AttribuerColisAuLivreurChef() {
     const {enqueueSnackbar} = useSnackbar();
     const [showScanner, setShowScanner] = useState(false);
     const [selectedLivreur, setSelectedLivreur] = useState(null);
+    const [errorOccurred, setErrorOccurred] = useState(false);
+    const [successOccurred, setSuccessOccurred] = useState(false);
+    useEffect(() => {
+        if (successOccurred) {
+            setTimeout(() => {
+                setSuccessOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [successOccurred]);
+    useEffect(() => {
+        if (errorOccurred) {
+            setTimeout(() => {
+                setErrorOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [errorOccurred]);
 
     const handleLivreurSelect = (selectedLivreur) => {
         setSelectedLivreur(selectedLivreur);
@@ -44,6 +60,7 @@ function AttribuerColisAuLivreurChef() {
                 }, getAuthorizedHeaders())
                 .then((response) => {
                     console.log('Livreur updated:', response.data);
+                    setSuccessOccurred(true);
                     enqueueSnackbar('Colis added to livreur successfully', {variant: 'success'});
                 })
                 .catch((error) => {
@@ -51,8 +68,10 @@ function AttribuerColisAuLivreurChef() {
                     if (error.response && error.response.data && error.response.data.error) {
                         // Display the backend error message in the Snackbar
                         enqueueSnackbar(error.response.data.error, {variant: 'error'});
+                        setErrorOccurred(true);
                     } else {
                         enqueueSnackbar('Error adding Colis to livreur', {variant: 'error'});
+                        setErrorOccurred(true);
                     }
                 });
         }
@@ -151,6 +170,8 @@ function AttribuerColisAuLivreurChef() {
                     />
                 </Box>
             </div>
+            {errorOccurred && <ErrorSound playSound={errorOccurred}/>}
+            {successOccurred && <SuccessSound playSound={successOccurred} />}
         </>
     );
 

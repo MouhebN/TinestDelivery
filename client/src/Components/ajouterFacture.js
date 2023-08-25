@@ -1,10 +1,30 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { Button, TextField, Typography, Grid, Paper } from '@mui/material';
+import {useSnackbar} from "notistack";
+import ErrorSound from "../Utils/ErrorSound";
+import SuccessSound from "../Utils/SuccesSound";
 
 const AjouterFacture = () => {
+    const { enqueueSnackbar } = useSnackbar();
     const [purchases, setPurchases] = useState([{ productName: '', quantity: 0, unitPrice: 0 }]);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [errorOccurred, setErrorOccurred] = useState(false);
+    const [successOccurred, setSuccessOccurred] = useState(false);
+    useEffect(() => {
+        if (successOccurred) {
+            setTimeout(() => {
+                setSuccessOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [successOccurred]);
+    useEffect(() => {
+        if (errorOccurred) {
+            setTimeout(() => {
+                setErrorOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [errorOccurred]);
 
     const handleAddPurchase = () => {
         setPurchases(prevPurchases => [...prevPurchases, { productName: '', quantity: 0, unitPrice: 0 }]);
@@ -42,10 +62,15 @@ const AjouterFacture = () => {
             });
             setPurchases([{ productName: '', quantity: 0, unitPrice: 0 }]);
             setTotalAmount(0);
-            alert('Facture created successfully');
+
+
+            enqueueSnackbar(' creating facture  done', { variant: 'success' });
+            setSuccessOccurred(true);
+
         } catch (error) {
             console.error('Error creating facture:', error);
-            alert('Error creating facture. Please try again.');
+            setErrorOccurred(true);
+            enqueueSnackbar('Error creating facture. Please try again.', { variant: 'error' });
         }
     };
 
@@ -84,6 +109,8 @@ const AjouterFacture = () => {
             <Button onClick={handleAddPurchase} variant="outlined">Add Purchase</Button>
             <Typography variant="h6" gutterBottom>Total Amount: {totalAmount}</Typography>
             <Button onClick={handleSubmit} variant="contained" color="primary">Submit</Button>
+            {errorOccurred && <ErrorSound playSound={errorOccurred}/>}
+            {successOccurred && <SuccessSound playSound={successOccurred} />}
         </div>
     );
 };

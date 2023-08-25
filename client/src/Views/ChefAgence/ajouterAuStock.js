@@ -6,16 +6,34 @@ import Box from "@mui/material/Box";
 import {Button} from "@mui/material";
 import {SnackbarProvider, useSnackbar} from "notistack";
 import MiniDrawerChefAgence from "../../Layouts/sideBarChefAgence";
+import {useEffect} from "react";
+import ErrorSound from "../../Utils/ErrorSound";
+import SuccessSound from "../../Utils/SuccesSound";
 
 
 
 function AjoutColisChef() {
     const {enqueueSnackbar}  = useSnackbar();
     const [isScanning, setIsScanning] = useState(false);
+    const [errorOccurred, setErrorOccurred] = useState(false);
+    const [successOccurred, setSuccessOccurred] = useState(false);
+    useEffect(() => {
+        if (successOccurred) {
+            setTimeout(() => {
+                setSuccessOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [successOccurred]);
+    useEffect(() => {
+        if (errorOccurred) {
+            setTimeout(() => {
+                setErrorOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [errorOccurred]);
     const startScanning = () => {
         setIsScanning(true);
     };
-
     const stopScanning = () => {
         setIsScanning(false);
     };
@@ -55,18 +73,22 @@ function AjoutColisChef() {
                             console.log('Colis added to stock successfully:', response.data);
                             // Show a success snackbar when a colis is added to stock
                             stopScanning();
+
+                            setSuccessOccurred(true);
                             enqueueSnackbar('Colis added to stock successfully', {variant: 'success'});
                         })
                         .catch((error) => {
                             if (error.response && error.response.data && error.response.data.error) {
-                                // Display the backend error message in the Snackbar
+                                setErrorOccurred(true);
                                 enqueueSnackbar(error.response.data.error, { variant: 'error' });
                             } else {
+                                setErrorOccurred(true);
                                 enqueueSnackbar('Error adding Colis to stock', { variant: 'error' });
                             }
                         });
                 }
             } catch (error) {
+                setErrorOccurred(true);
                 enqueueSnackbar('Error parsing QR code data', {variant: 'error'});
                 console.error('Error parsing QR code data:', error);
             }
@@ -108,9 +130,9 @@ function AjoutColisChef() {
                     )}
                 </div>
             </SnackbarProvider>
+            {errorOccurred && <ErrorSound playSound={errorOccurred}/>}
+            {successOccurred && <SuccessSound playSound={successOccurred} />}
         </>
-
-
     )};
 
 export default AjoutColisChef;

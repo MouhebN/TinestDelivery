@@ -98,56 +98,24 @@ exports.listerLivreurAgence = async (req, res) => {
 };
 exports.ajouterColisAuStock = async (req, res) => {
     try {
-        const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
-        // Find the stock using the agence ID
-        const stock = await Stock.findOne({agence: agenceId});
-        const {
-            id,
-            fournisseur,
-            destination,
-            num_client,
-            nomClient,
-            prenomClient,
-            date_creation,
-            prix,
-            typeDePayment,
-            largeur,
-            hauteur,
-            typeColis
-        } = req.body;
+        const { id } = req.body;
 
-        // Check if a colis with the same _id already exists in the stock
-        const existingColis = stock.colis.find((colis) => colis._id.toString() === id);
+        // Find the colis by _id
+        const colis = await colisModel.findById(id);
 
-        if (existingColis) {
-            return res.status(400).json({error: 'Colis already exists in the stock'});
+        if (!colis) {
+            return res.status(400).json({ error: 'Colis not found' });
         }
+        // Update the colis data
+        colis.status = 'en stock';
+        colis.dateEntredStock = new Date();
 
-        const newColis = {
-            _id: id,
-            fournisseur,
-            destination,
-            num_client,
-            nomClient,
-            prenomClient,
-            status: 'en stock',
-            date_creation,
-            dateEntredStock: new Date(),
-            prix,
-            typeDePayment,
-            largeur,
-            hauteur,
-            typeColis,
-        };
-        // Update the stock's colis array with the new colis data
-        stock.colis.push(newColis);
+        // Save the updated colis
+        await colis.save();
 
-        // Save the updated stock
-        const updatedStock = await stock.save();
-        colisModel.findByIdAndUpdate(id, newColis);
-        res.status(200).json({message: 'Colis ajouté au stock avec succès', updatedStock});
+        res.status(200).json({ message: 'Colis status and date updated successfully' });
     } catch (error) {
-        res.status(400).json({error});
+        res.status(400).json({ error });
     }
 };
 exports.attribuerColisAuLivreur = async (req, res) => {
@@ -155,16 +123,7 @@ exports.attribuerColisAuLivreur = async (req, res) => {
         // Step 1: Verify the existence of the selected livreur.
         const {livreurId, id, numeroClient} = req.body;
         const livreur = await livreurModel.findById(livreurId);
-        const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
-        const stock = await Stock.findOne({agence: agenceId});
 
-        // Verify that the colis exists in the stock's colis array
-        const colisIndex = stock.colis.findIndex((item) => item._id.toString() === id);
-        if (colisIndex === -1) {
-            console.log('Colis not found in the stock');
-            return res.status(404).json({error: 'Colis not found in the stock'});
-        }
-        const colis = stock.colis[colisIndex];
         // Check if the colis already has a livreur assigned to it
         if (livreur.colis.includes(id)) {
             console.log('Colis already has a livreur assigned');
@@ -190,23 +149,6 @@ exports.attribuerColisAuLivreur = async (req, res) => {
         // Step 6: Update the status of the colis in the stock collection.
         stock.colis[colisIndex] = colis; // Update the colis in stock.colis array
         await stock.save();
-
-        // Format the phone number in E.164 format
-        const formattedPhoneNumber = `+216${numeroClient}`;
-
-        /*// Send an SMS notification to the client
-        const accountSid = 'AC2ba6a107cd4b2f599fca92244e185120'; // Your Twilio Account SID
-        const authToken = '756903d0a8db85a3ed7ecf0b6ca36cc3'; // Your Twilio Auth Token
-        const client = twilio(accountSid, authToken);
-
-        const message = await client.messages.create({
-            body: 'Your colis is on the way!',
-            from: '+17622496275', // Your Twilio phone number
-            to: formattedPhoneNumber,
-        });
-
-        console.log('SMS sent:', message.sid);*/
-
         return res.status(200).json({message: 'Colis attribué au livreur et SMS envoyé au client'});
     } catch (error) {
         console.error('Error attribuerColisAuLivreur:', error);

@@ -12,15 +12,32 @@ import { calculateTotalAmountForLivreur } from '../../Components/totalAmountCalc
 import {FaBox} from "react-icons/fa";
 import {updateColisStatus} from "../../Components/UpdateColisStatus";
 import {Button} from "@mui/material";
+import ErrorSound from "../../Utils/ErrorSound";
+import SuccessSound from "../../Utils/SuccesSound";
 
 function GetLivreurAmount() {
     const [totalAmount, setTotalAmount] = useState(0);
     const { enqueueSnackbar } = useSnackbar();
     const [selectedLivreur, setSelectedLivreur] = useState(null);
     const [livredColis, setLivredColis] = useState([]);
-    const [livredColisCount, setLivredColisCount] = useState(0); // Initialize with 0
-    const [livredColisRetour, setLivredColisRetour] = useState(0); // Initialize with 0
-
+    const [livredColisCount, setLivredColisCount] = useState(0);
+    const [livredColisRetour, setLivredColisRetour] = useState(0);
+    const [errorOccurred, setErrorOccurred] = useState(false);
+    const [successOccurred, setSuccessOccurred] = useState(false);
+    useEffect(() => {
+        if (successOccurred) {
+            setTimeout(() => {
+                setSuccessOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [successOccurred]);
+    useEffect(() => {
+        if (errorOccurred) {
+            setTimeout(() => {
+                setErrorOccurred(false); // Reset successOccurred after a certain duration
+            }, 1000); // Adjust the duration as needed
+        }
+    }, [errorOccurred]);
     const handleLivreurSelect = (selectedLivreur) => {
         setSelectedLivreur(selectedLivreur);
     };
@@ -65,9 +82,11 @@ function GetLivreurAmount() {
         const selectedColisIds = livredColis.map(colis => colis.id); // Assuming 'id' is the property holding the colis ID
         try {
             await updateColisStatus(selectedColisIds);
+            setSuccessOccurred(true);
             enqueueSnackbar(' approving livreur livred colis done', { variant: 'success' });
         } catch (error) {
             console.error('Error approving livreur livré colis:', error);
+            setErrorOccurred(true);
             enqueueSnackbar('Error approving livreur livred colis', { variant: 'error' });
         }
     };
@@ -179,6 +198,8 @@ function GetLivreurAmount() {
                     <Div variant="h4">Total Amount: {totalAmount} Dinar</Div>
                 </Box>
             </Box>
+            {errorOccurred && <ErrorSound playSound={errorOccurred}/>}
+            {successOccurred && <SuccessSound playSound={successOccurred} />}
         </>
     );
 }

@@ -67,7 +67,6 @@ const ColisAgenceChef = () => {
             });
     }, []);
     useEffect(() => {
-
         const lowerCaseQuery = searchQuery.toLowerCase();
         const filtered = agenceColis.filter(row =>
             row.nomClient.toLowerCase().includes(lowerCaseQuery) ||
@@ -80,7 +79,6 @@ const ColisAgenceChef = () => {
         console.log('Filtered data:', filtered);
         setFilteredData(filtered);
     }, [searchQuery, agenceColis]);
-
 
     const columns = [
         {
