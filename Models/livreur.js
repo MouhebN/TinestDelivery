@@ -100,11 +100,6 @@ const livreurSchema = new mongoose.Schema({
             }, dateLivraison:{
                 type: Date,
                 required: false
-            },
-            livreurPickup: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Livreur',
-                required: false
             }
         }
     ],

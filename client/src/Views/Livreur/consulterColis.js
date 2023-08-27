@@ -27,7 +27,7 @@ function ConsulterColis() {
     const [livredColisRetour, setLivredColisRetour] = useState(0); // Initialize with 0
     useEffect(() => {
         // Filter rows to count "livré" colis with retourCount = 0
-        const filteredLivredColisretour = livredColis.filter(livredColis => livredColis.status === 'livré' && livredColis.retourCount === !0);
+        const filteredLivredColisretour = livredColis.filter(livredColis => livredColis.status === 'livré' && livredColis.retourCount !== 0);
 
         // Set the count of "livré" colis with retourCount = 0
         setLivredColisRetour(filteredLivredColisretour.length);
@@ -121,6 +121,7 @@ function ConsulterColis() {
             },
         },
         {field: 'retourCount', headerName: 'RetourCount', width: 100},
+        {field: 'prix', headerName: 'Prix', width: 100},
     ];
     const columns = [
         {

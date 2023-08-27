@@ -39,7 +39,7 @@ function ColisEnAttenteLivreur() {
             .catch((error) => {
                 console.error('Error fetching "en attente" colis:', error);
             });
-    }, []);  // Empty dependency array means this effect runs only once on mount
+    }, []);
 
     const columns = [
         {
@@ -61,7 +61,7 @@ function ColisEnAttenteLivreur() {
                             sx={{
                                 cursor: "pointer",
                                 marginRight: "10px"
-                            }} // Add a pointer cursor to indicate it's clickable
+                            }}
                         />
                         <Typography>{address}</Typography>
                     </Box>
@@ -115,7 +115,6 @@ function ColisEnAttenteLivreur() {
         }
 
     ];
-
     return (
         <Box sx={{
             position: 'static', marginLeft: '259px', overflow: 'auto', height: 500,

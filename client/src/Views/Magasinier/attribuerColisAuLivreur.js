@@ -9,7 +9,6 @@ import {DataGrid} from "@mui/x-data-grid";
 import {useEffect} from "react";
 import StockAnimation from "../../Components/StockAnimation";
 import MiniDrawerMagasinier from "../../Layouts/sideBarMagasinier";
-import ReadyAnimation from "../../Components/ReadyAnimation";
 import {Tooltip} from "@mui/material";
 
 
@@ -32,14 +31,12 @@ function AttribuerColisAuLivreur() {
         const parsedData = JSON.parse(data);
         if (selectedLivreur) {
             const colisId = parsedData.id;
-            const numero = parsedData.num_client;
             const livreurId = selectedLivreur;
 
             axios
                 .post('http://localhost:3000/attribuerColis', {
                     livreurId: livreurId,
                     id: colisId,
-                    numeroClient: numero
                 }, getAuthorizedHeaders())
                 .then((response) => {
                     console.log('Livreur updated:', response.data);
@@ -48,7 +45,6 @@ function AttribuerColisAuLivreur() {
                 .catch((error) => {
                     console.error('Error updating livreur:', error);
                     if (error.response && error.response.data && error.response.data.error) {
-                        // Display the backend error message in the Snackbar
                         enqueueSnackbar(error.response.data.error, {variant: 'error'});
                     } else {
                         enqueueSnackbar('Error adding Colis to livreur', {variant: 'error'});
