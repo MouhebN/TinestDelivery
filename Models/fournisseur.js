@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 
 const fournisseurSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
+    },
     nom: {
         type: String,
         required: true
@@ -26,6 +31,12 @@ const fournisseurSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Agence',
         required: true
-    }
+    },
+    password:
+        { type: String, required: false },
+    role:
+        { type: String, required: false },
+    username:
+        { type: String, required: false },
 })
 module.exports = mongoose.model('fournisseurs', fournisseurSchema);

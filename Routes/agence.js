@@ -7,6 +7,6 @@ const authenticateToken = require('../authMiddelware'); // Import the middleware
 router.post('/ajouterAgence', authenticateToken, agenceController.ajouterAgence);
 router.post('/:id/modifierAgence', authenticateToken, agenceController.modifierAgence);
 router.get('/:id/supprimerAgence', authenticateToken, agenceController.supprimerAgence);
-router.get('/listerAgences', authenticateToken, agenceController.listerAgences);
+router.get('/listerAgences', authenticateToken,agenceController.listerAgences);
 
 module.exports = router;

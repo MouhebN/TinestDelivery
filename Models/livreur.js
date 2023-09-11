@@ -18,7 +18,6 @@ const livreurSchema = new mongoose.Schema({
     password: { type: String, required: false },
     role: { type: String, required: false },
     username: { type: String, required: false },
-
     address: {
         type: String,
         required: false

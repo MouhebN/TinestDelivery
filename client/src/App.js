@@ -19,6 +19,16 @@ import AttribuerColisAuLivreurChef from "./Views/ChefAgence/attribuerColis";
 import RetourColisAuStockChef from "./Views/ChefAgence/scanRetour";
 import Facture from "./Views/ChefAgence/facture";
 import ListFactures from "./Components/listerFacturesChef";
+import MiniDrawerfourisseur from "./Components/SideBar";
+import Parcellist from "./Views/Fournisseur/Parcellist";
+import ExchangeColis from "./Views/Fournisseur/exchangeparcel";
+import SuiviEchange from "./Views/Fournisseur/Suiviexchange";
+import ManagementParcel from "./Views/Fournisseur/ManagementParcel";
+import Accueil from './Views/Fournisseur/Acceuil';
+import Addparcel from './Views/Fournisseur/AddParcel';
+import DisplayColis from "./Views/Fournisseur/DisplayColis";
+
+
 
 function App() {
     const [userRole, setUserRole] = useState('');
@@ -77,6 +87,18 @@ function App() {
                                 <Route path="/payementColis" element={<PaymentColisClient/>}/>
                                 <Route path="/retourAuFournisseur" element={<RetourAuFournisseurColis/>}/>
                                 <Route path="/scanPickup" element={<ScanPickup/>}/>
+                            </>
+                        )}
+                        {userRole === 'fournisseur' && (
+                            <>
+                                <Route path="/Accueil" element={<Accueil />} />
+                                <Route path="/parcellist" element={<Parcellist/>} />
+                                <Route path="/echangeparcel" element={<ExchangeColis/>} />
+                                <Route path="/suiviechange" element={<SuiviEchange/>} />
+                                <Route path="/Addparcel" element={<Addparcel/>} />
+                                <Route path="/parcelmanagement" element={<ManagementParcel/>} />
+                                <Route path="/displayColis" element={<DisplayColis/>} />
+
                             </>
                         )}
                     </Routes>

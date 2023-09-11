@@ -50,12 +50,11 @@ exports.supprimerAgence = (req, res) => {
         });
 };
 
-exports.listerAgences = (req, res) => {
-    agenceModel.find({})
-        .then(agencesList => {
-            res.status(200).json({ agencesList });
-        })
-        .catch(error => {
-            res.status(400).json({ error });
-        });
+exports.listerAgences = async (req, res) => {
+    try {
+        const agences = await agenceModel.find();
+        res.status(200).json({agences});
+    } catch (error) {
+        res.status(500).json({error: 'An error occurred while fetching agences.'});
+    }
 };

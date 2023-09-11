@@ -55,6 +55,8 @@ export default function SignInSide({setUserRoleFromToken}) {
                     window.location.href = '/payementColis';
                 } else if (data.role === 'chefAgence') {
                     window.location.href = '/getData';
+                } else if (data.role === 'fournisseur') {
+                    window.location.href = '/Accueil';
                 } else {
                     console.error('Error during login:');
                     enqueueSnackbar(response.data.error, {variant: 'error'});

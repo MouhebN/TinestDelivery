@@ -6,11 +6,13 @@ const twilio = require('twilio');
 const jwt = require('jsonwebtoken');
 const {jwtSecret} = require(".././config");
 const getAgenceIdFromToken = require('../utils/getAgenceIdFromToken');
+const getFournisseurIdFromToken = require("../Utils/getFournisseurdFromToken");
 
 
-exports.ajouterColis = (req, res) => {
+exports.ajouterColis = async (req, res) => {
+    const fournisseurId = await getFournisseurIdFromToken(req.headers['x-access-token']);
     const colisObj = {
-        fournisseur: req.body.fournisseur,
+        fournisseur: fournisseurId,
         destination: req.body.destination,
         num_client: req.body.num_client,
         nomClient: req.body.nomClient,
@@ -23,9 +25,9 @@ exports.ajouterColis = (req, res) => {
         largeur: req.body.largeur,
         hauteur: req.body.hauteur,
         typeColis: req.body.typeColis,
-        livreurPickup:req.body.livreurPickup,
-        agence:req.body.agence
-
+        livreurPickup: req.body.livreurPickup,
+        agence: req.body.agence,
+        nomArticle: req.body.nomArticle
     };
 
     const colis = new colisModel(colisObj);
@@ -36,6 +38,7 @@ exports.ajouterColis = (req, res) => {
         })
         .catch(error => {
             res.status(400).json({error});
+            console.log("error ajouter colis : ", error);
         });
 };
 exports.modifierColis = (req, res) => {
@@ -76,8 +79,18 @@ exports.supprimerColis = (req, res) => {
             res.status(400).json({error});
         });
 };
-exports.listerColis = (req, res) => {
+exports.listerColis = async (req, res) => {
     colisModel.find({})
+        .then(colisList => {
+            res.status(200).json({colisList});
+        })
+        .catch(error => {
+            res.status(400).json({error});
+        });
+};
+exports.listerColisFournisseur = async (req, res) => {
+    const fournisseurId = await getFournisseurIdFromToken(req.headers['x-access-token']);
+    colisModel.find({fournisseur:fournisseurId})
         .then(colisList => {
             res.status(200).json({colisList});
         })
@@ -254,7 +267,6 @@ exports.retourColisAuStock = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
-
 exports.getAllColisFromStock = async (req, res) => {
     try {
         const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
