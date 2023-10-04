@@ -4,7 +4,7 @@ const colisSchema = new mongoose.Schema(
         fournisseur: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Fournisseur',
-            required: true
+            required: false
         },
         destination: {
             type: String,
@@ -30,7 +30,7 @@ const colisSchema = new mongoose.Schema(
         status: {
             type: String,
             enum: ['en attente', 'en stock', 'en cours', 'retour en stock', 'livré', 'en pickup',
-                'annulé', 'retour au fournisseur', 'livré et payé', 'payé'],
+                'annulé', 'retour au fournisseur', 'livré et payé', 'payé fournisseur'],
             required: true
         },
         retourCount: {
@@ -40,7 +40,7 @@ const colisSchema = new mongoose.Schema(
         date_creation:
             {
                 type: Date,
-                required: true
+                required: false
             },
         prix:
             {
@@ -67,11 +67,6 @@ const colisSchema = new mongoose.Schema(
                 type: String,
                 required: false
             },
-        stock: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Stock',
-            required: false,
-        },
         dateEntredStock: {
             type: Date,
             required: false
@@ -88,11 +83,30 @@ const colisSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Livreur',
             required: false
-        },   agence: {
+        },
+        agence: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Agence',
             required: true
-        }
+        },
+        fragile:
+            {
+                type: String,
+                required: false
+            }   ,
+
+        nomArticle:{
+            type: String,
+            required: false
+        },
+
+        historique: [
+            {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'ColisHistorique', // Référence au modèle d'historique des colis
+            },
+          ],
+
     }
 )
 

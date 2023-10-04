@@ -1,6 +1,6 @@
 const livreurModel = require("../Models/livreur");
 const colisModel = require("../Models/colis");
-const fournisseurModel = require('../models/fournisseur');
+const fournisseurModel = require('../Models/fournisseur');
 const jwt = require("jsonwebtoken");
 const {jwtSecret} = require("../config");
 const getAgenceIdFromToken = require("../Utils/getAgenceIdFromToken");
@@ -18,8 +18,8 @@ exports.getLivreurColis = async (req, res) => {
                 ...colis.toObject(),
                 fournisseur: {
                     nom: fournisseur ? fournisseur.nom : '',
-                    adresse: fournisseur ? fournisseur.adresse : '',
-                    numero: fournisseur ? fournisseur.numero : '',
+                    address: fournisseur ? fournisseur.address : '',
+                    telephone: fournisseur ? fournisseur.telephone : '',
                 },
             };
         }));
@@ -67,9 +67,8 @@ exports.getColisEnAttente = async (req, res) => {
                 ...colis.toObject(),
                 fournisseur: {
                     nom: fournisseur ? fournisseur.nom : '',
-                    adresse: fournisseur ? fournisseur.adresse : '',
-                    numero: fournisseur ? fournisseur.numero : '',
-
+                    address: fournisseur ? fournisseur.address : '',
+                    telephone: fournisseur ? fournisseur.telephone : '',
                 },
             };
         }));
@@ -100,8 +99,8 @@ exports.getColisAgence = async (req, res) => {
                 ...colis.toObject(),
                 fournisseur: {
                     nom: fournisseur ? fournisseur.nom : '',
-                    adresse: fournisseur ? fournisseur.adresse : '',
-                    numero: fournisseur ? fournisseur.numero : '',
+                    address: fournisseur ? fournisseur.address : '',
+                    telephone: fournisseur ? fournisseur.telephone : '',
                 },
                 livreur: {
                     nom: livreur ? livreur.nom : '',

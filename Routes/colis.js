@@ -8,7 +8,10 @@ const authenticateToken = require('../authMiddelware');
 router.post('/ajouterColis',  colisController.ajouterColis);
 router.post('/:id/modifierColis', authenticateToken, colisController.modifierColis);
 router.get('/:id/supprimerColis', authenticateToken, colisController.supprimerColis);
-router.get('/listerColis', authenticateToken, colisController.listerColis);
+router.get('/listerColis', authenticateToken,colisController.listerColis);
+router.get('/listerColisFournisseur', authenticateToken,colisController.listerColisFournisseur);
+// Ajoutez cette route pour gérer l'échange de colis
+
 
 
 // magasinier

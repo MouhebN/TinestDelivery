@@ -1,6 +1,6 @@
 
-const Magasinier = require('../models/Magasinier');
-const Livreur = require('../models/Livreur');
+const Magasinier = require('../Models/magasinier');
+const Livreur = require('../Models/livreur');
 // Import other model schemas for different roles
 
 exports.createUser = async (req, res) => {

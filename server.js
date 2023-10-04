@@ -11,11 +11,21 @@ const port = 3000;
 
 app.use(express.json());
 app.use(cors());
+const factureRoute = require('./Routes/facture');
+app.use('', factureRoute);
+
 const chefAgenceRoute = require('./Routes/chefAgence');
 app.use('', chefAgenceRoute);
 
+const echangeColisRoutes =require('./Routes/echangerColisRoutes')
+app.use('', echangeColisRoutes);
+
 const colisRoute = require('./Routes/colis.js');
 app.use('', colisRoute);
+
+const historiqueRoute = require('./Routes/colisHistorique.js');
+app.use('', historiqueRoute);
+
 const agenceRoute = require('./Routes/agence.js');
 app.use('', agenceRoute);
 
@@ -29,10 +39,11 @@ const livreurRoute = require('./Routes/livreur.js');
 app.use('', livreurRoute);
 
 const stockRoute = require('./Routes/stock.js');
+const colisHistorique = require('./Models/colisHistorique');
 app.use('', stockRoute);
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/tinest-delivery',{
+mongoose.connect('mongodb://127.0.0.1:27017/tinestDL',{
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

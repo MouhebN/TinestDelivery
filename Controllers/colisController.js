@@ -1,16 +1,17 @@
 const colisModel = require('../Models/colis');
-const fournisseurModel = require('../models/fournisseur');
+const fournisseurModel = require('../Models/fournisseur');
 const livreurModel = require('../Models/livreur');
 const Stock = require('../Models/stock');
 const twilio = require('twilio');
 const jwt = require('jsonwebtoken');
 const {jwtSecret} = require(".././config");
-const getAgenceIdFromToken = require('../utils/getAgenceIdFromToken');
-
-
-exports.ajouterColis = (req, res) => {
+const getAgenceIdFromToken = require('../Utils/getAgenceIdFromToken');
+const getFournisseurIdFromToken = require("../Utils/getFournisseurdFromToken");
+const colisHistorique = require('../Models/colisHistorique');
+exports.ajouterColis = async (req, res) => {
+    const fournisseurId = await getFournisseurIdFromToken(req.headers['x-access-token']);
     const colisObj = {
-        fournisseur: req.body.fournisseur,
+        fournisseur: fournisseurId,
         destination: req.body.destination,
         num_client: req.body.num_client,
         nomClient: req.body.nomClient,
@@ -23,9 +24,9 @@ exports.ajouterColis = (req, res) => {
         largeur: req.body.largeur,
         hauteur: req.body.hauteur,
         typeColis: req.body.typeColis,
-        livreurPickup:req.body.livreurPickup,
-        agence:req.body.agence
-
+        livreurPickup: req.body.livreurPickup,
+        agence: req.body.agence,
+        nomArticle: req.body.nomArticle
     };
 
     const colis = new colisModel(colisObj);
@@ -36,6 +37,7 @@ exports.ajouterColis = (req, res) => {
         })
         .catch(error => {
             res.status(400).json({error});
+            console.log("error ajouter colis : ", error);
         });
 };
 exports.modifierColis = (req, res) => {
@@ -76,8 +78,18 @@ exports.supprimerColis = (req, res) => {
             res.status(400).json({error});
         });
 };
-exports.listerColis = (req, res) => {
+exports.listerColis = async (req, res) => {
     colisModel.find({})
+        .then(colisList => {
+            res.status(200).json({colisList});
+        })
+        .catch(error => {
+            res.status(400).json({error});
+        });
+};
+exports.listerColisFournisseur = async (req, res) => {
+    const fournisseurId = await getFournisseurIdFromToken(req.headers['x-access-token']);
+    colisModel.find({fournisseur:fournisseurId})
         .then(colisList => {
             res.status(200).json({colisList});
         })
@@ -98,121 +110,83 @@ exports.listerLivreurAgence = async (req, res) => {
 };
 exports.ajouterColisAuStock = async (req, res) => {
     try {
-        const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
-        // Find the stock using the agence ID
-        const stock = await Stock.findOne({agence: agenceId});
-        const {
-            id,
-            fournisseur,
-            destination,
-            num_client,
-            nomClient,
-            prenomClient,
-            date_creation,
-            prix,
-            typeDePayment,
-            largeur,
-            hauteur,
-            typeColis
-        } = req.body;
+        const { id } = req.body;
 
-        // Check if a colis with the same _id already exists in the stock
-        const existingColis = stock.colis.find((colis) => colis._id.toString() === id);
+        // Find the colis by _id
+        const colis = await colisModel.findById(id);
 
-        if (existingColis) {
-            return res.status(400).json({error: 'Colis already exists in the stock'});
+        if (!colis) {
+            return res.status(400).json({ error: 'Colis not found' });
         }
+        // Update the colis data
+        colis.status = 'en stock';
+        colis.dateEntredStock = new Date();
 
-        const newColis = {
-            _id: id,
-            fournisseur,
-            destination,
-            num_client,
-            nomClient,
-            prenomClient,
-            status: 'en stock',
-            date_creation,
-            dateEntredStock: new Date(),
-            prix,
-            typeDePayment,
-            largeur,
-            hauteur,
-            typeColis,
-        };
+        // Save the updated colis
+        await colis.save();
 
-        // Update the stock's colis array with the new colis data
-        stock.colis.push(newColis);
-
-        // Save the updated stock
-        const updatedStock = await stock.save();
-        colisModel.findByIdAndUpdate(id, newColis);
-
-        res.status(200).json({message: 'Colis ajouté au stock avec succès', updatedStock});
+        res.status(200).json({ message: 'Colis status and date updated successfully' });
     } catch (error) {
-        res.status(400).json({error});
+        res.status(400).json({ error });
     }
 };
 exports.attribuerColisAuLivreur = async (req, res) => {
     try {
-        // Step 1: Verify the existence of the selected livreur.
-        const {livreurId, id, numeroClient} = req.body;
-        const livreur = await livreurModel.findById(livreurId);
-        const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
-        const stock = await Stock.findOne({agence: agenceId});
+        const { livreurId, id } = req.body;
 
-        // Verify that the colis exists in the stock's colis array
-        const colisIndex = stock.colis.findIndex((item) => item._id.toString() === id);
-        if (colisIndex === -1) {
-            console.log('Colis not found in the stock');
-            return res.status(404).json({error: 'Colis not found in the stock'});
+        // Step 1: Verify the existence of the selected livreur.
+        const livreur = await livreurModel.findById(livreurId);
+
+        // Step 2: Verify the existence of the selected colis.
+        const colis = await colisModel.findById(id);
+
+        if (!colis) {
+            return res.status(404).json({ error: 'Colis not found' });
         }
-        const colis = stock.colis[colisIndex];
+
         // Check if the colis already has a livreur assigned to it
         if (livreur.colis.includes(id)) {
             console.log('Colis already has a livreur assigned');
-            return res.status(400).json({error: 'Colis already has a livreur assigned'});
+            return res.status(400).json({ error: 'Colis already has a livreur assigned' });
         }
 
-        // Step 3: Check if the colis is already present in any livreur's colis array.
-        const existingLivreur = await livreurModel.findOne({colis: {$elemMatch: {_id: id}}});
-        if (existingLivreur) {
+        // Check if the colis is already assigned to a livreur
+        if (colis.livreur) {
             console.log('Colis is already assigned to a livreur');
-            return res.status(400).json({error: 'Colis is already assigned to a livreur'});
+            return res.status(400).json({ error: 'Colis is already assigned to a livreur' });
         }
-        // Step 4: Update the colis with the livreur's details and change the status to "en cours".
+
+        // Retrieve the required fields from the colisModel using the colis ID
+        const { prix, date_creation, status, num_client, destination ,nomClient,prenomClient ,retourCount ,datePickup ,fournisseur} = await colisModel.findById(id);
+
+        // Update the colis with the livreur's details and change the status to "en cours".
         colis.livreur = livreurId;
         colis.status = 'en cours';
         await colis.save();
 
+        // Update the colis in the colisModel
         await colisModel.findByIdAndUpdate(id, { livreur: livreurId, status: 'en cours' });
 
-        // Step 5: Add the colis to the livreur's colis array.
-        livreur.colis.push(colis);
-        await livreur.save();
-        // Step 6: Update the status of the colis in the stock collection.
-        stock.colis[colisIndex] = colis; // Update the colis in stock.colis array
-        await stock.save();
-
-        // Format the phone number in E.164 format
-        const formattedPhoneNumber = `+216${numeroClient}`;
-
-        /*// Send an SMS notification to the client
-        const accountSid = 'AC2ba6a107cd4b2f599fca92244e185120'; // Your Twilio Account SID
-        const authToken = '756903d0a8db85a3ed7ecf0b6ca36cc3'; // Your Twilio Auth Token
-        const client = twilio(accountSid, authToken);
-
-        const message = await client.messages.create({
-            body: 'Your colis is on the way!',
-            from: '+17622496275', // Your Twilio phone number
-            to: formattedPhoneNumber,
+        // Add the retrieved fields to the livreur's colis array.
+        livreur.colis.push({
+            _id: id,
+            prix,
+            date_creation,
+            status,
+            num_client,
+            destination,
+            nomClient,
+            prenomClient,
+            retourCount,
+            datePickup,
+            fournisseur
         });
+        await livreur.save();
 
-        console.log('SMS sent:', message.sid);*/
-
-        return res.status(200).json({message: 'Colis attribué au livreur et SMS envoyé au client'});
+        return res.status(200).json({ message: 'Colis attribué au livreur' });
     } catch (error) {
         console.error('Error attribuerColisAuLivreur:', error);
-        res.status(500).json({error: 'Internal server error'});
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 exports.retourColisAuStock = async (req, res) => {
@@ -257,19 +231,52 @@ exports.retourColisAuStock = async (req, res) => {
         return res.status(500).json({error: 'Internal server error'});
     }
 };
+exports.retourColisAuStock = async (req, res) => {
+    try {
+        const { id } = req.body;
+
+        // Find the colis by _id
+        const colis = await colisModel.findById(id);
+        console.log('colis',colis)
+
+        if (!colis) {
+            return res.status(404).json({ error: 'Colis not found' });
+        }
+
+        // Update the colis status and any other necessary fields
+        colis.status = 'retour en stock';
+        colis.retourCount += 1;
+
+        // Save the updated colis
+        await colis.save();
+
+        if (colis.livreur) {
+            const livreur = await livreurModel.findById(colis.livreur);
+
+
+            if (livreur) {
+                // Remove the colis using Mongoose's .pull() method
+                livreur.colis.pull(colis._id);
+                await livreur.save();
+            }
+        }
+        return res.status(200).json({ message: 'Colis status updated successfully', updatedColis: colis });
+    } catch (error) {
+        console.error('Error in retourColisAuStock:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
 exports.getAllColisFromStock = async (req, res) => {
     try {
         const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
-        const stock = await Stock.findOne({agence: agenceId});
 
-        if (!stock) {
-            return res.status(404).json({error: 'Stock not found for the connected magasinier'});
-        }
+        // Find all colis in the Colis collection with status 'en stock'
+        const colisList = await colisModel.find({ agence: agenceId, status: 'en stock' });
 
-        return res.status(200).json(stock.colis);
+        return res.status(200).json(colisList);
     } catch (error) {
         console.error('Error getting colis data from stock:', error);
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 exports.getLivreur = async (req, res) => {
@@ -300,16 +307,14 @@ exports.getMultipleLivreur = async (req, res) => {
 exports.getAllColisEnStock = async (req, res) => {
     try {
         const agenceId = await getAgenceIdFromToken(req.headers['x-access-token']);
-        const stock = await Stock.findOne({agence: agenceId});
-        if (!stock) {
-            return res.status(404).json({error: 'Stock not found for the connected magasinier'});
-        }
-        // Filter colis to get those with status 'en stock'
-        const colisEnStock = stock.colis.filter((colis) => colis.status === 'en stock');
+
+        // Find all colis in the Colis collection with status 'en stock' and agence matching
+        const colisEnStock = await colisModel.find({ agence: agenceId, status: 'en stock' });
+
         return res.status(200).json(colisEnStock);
     } catch (error) {
         console.error('Error getting colis data from stock:', error);
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 exports.pickUpColis = async (req, res) => {
@@ -398,9 +403,9 @@ exports.getLivreurLivredColis = async (req, res) => {
         const livreur = await livreurModel.findOne({ userId });
 
         // Find all "livré" colis for the specific livreur
-        const livresColis = await colisModel.find({ livreur: livreur.id, status: 'livré' });
+        const livredColis = await colisModel.find({ livreur: livreur.id, status: 'livré' });
 
-        res.status(200).json(livresColis);
+        res.status(200).json(livredColis);
     } catch (error) {
         console.error('Error fetching livreur livré colis:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -433,8 +438,8 @@ exports.getColisEnAttenteForLivreur = async (req, res) => {
                 ...colis.toObject(),
                 fournisseur: {
                     nom: fournisseur ? fournisseur.nom : '',
-                    adresse: fournisseur ? fournisseur.adresse : '',
-                    numero: fournisseur ? fournisseur.numero : '',
+                    address: fournisseur ? fournisseur.address : '',
+                    telephone: fournisseur ? fournisseur.telephone : '',
 
                 },
             };
@@ -458,5 +463,3 @@ exports.updateColisStatus = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
-

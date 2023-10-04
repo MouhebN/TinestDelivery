@@ -18,7 +18,6 @@ const livreurSchema = new mongoose.Schema({
     password: { type: String, required: false },
     role: { type: String, required: false },
     username: { type: String, required: false },
-
     address: {
         type: String,
         required: false
@@ -29,7 +28,7 @@ const livreurSchema = new mongoose.Schema({
     },
     matricule_voiture: {
         type: String,
-        required: false
+        required: true
     },
     telephone: {
         type: String,
@@ -99,11 +98,6 @@ const livreurSchema = new mongoose.Schema({
 
             }, dateLivraison:{
                 type: Date,
-                required: false
-            },
-            livreurPickup: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Livreur',
                 required: false
             }
         }
