@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Paper, Grid } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import PayedAnimation from "./payedAnimation";
+import PayedAnimation from   "./payedAnimation";
 import ReadyAnimation from "./ReadyAnimation";
 import MyLottieAnimation from "./CarAnimation";
 import CancelledAnimation from "./CancelledAnimation";
@@ -53,7 +53,7 @@ const ColisStatusCounts = () => {
             {Object.keys(statusDistribution).map((status, index) => (
                 <Grid sx={{padding: '20px',boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)'}} item xs={2} key={index}>
                     <Paper
-                        elevation={3}
+                        status={3}
                         sx={{
                             p: 1,
                             height: '100%',

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import MiniDrawerfourisseur from "../../Components/SideBar";
+import MiniDrawerfourisseur from "../../Layouts/sideBarFournisseur";
 import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HistoryIcon from "@mui/icons-material/History"; // Nouvelle icône pour l'historique

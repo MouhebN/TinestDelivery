@@ -28,7 +28,7 @@ import EditColis from './EditColis';
 import DetailColis from './DetailColis';
 import '../../App.css';
 import {DataGrid} from "@mui/x-data-grid";
-import MiniDrawerfourisseur from "../../Components/SideBar";
+import MiniDrawerfourisseur from "../../Layouts/sideBarFournisseur";
 import {styled} from "@mui/material/styles";
 import ImportExcel from './ImportExcel';
 import ColisImprimer  from "./ImprimerColis";

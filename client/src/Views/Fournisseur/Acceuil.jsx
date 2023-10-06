@@ -1,38 +1,41 @@
-import { FaCheck,
-    FaUndo,
-    FaReply,
-    FaExchangeAlt,
-    FaBan,
-    FaShoppingCart,
-    FaRedoAlt,
-    FaArchive,
-    FaTruckLoading,
-} from "react-icons/fa";
+import { FaCheck} from "react-icons/fa";
 import { useState, useEffect } from 'react';
+import Grid from "@mui/material/Grid";
 import { Typography, DatePicker, Button,Table, Input, Select } from "antd";
 import axios from 'axios';
-
+import ReadyAnimation from "../../Components/ReadyAnimation";
+import StockAnimation from "../../Components/StockAnimation";
+import RetourAnimation from "../../Components/RetourEnStockAnimation";
+import PayedAnimation from "../../Components/payedAnimation";
+import LoadingAnimation from "../../Components/LoadingAnimation";
+import CancelledAnimation from "../../Components/CancelledAnimation";
+import MyLottieAnimation from "../../Components/CarAnimation";
+import RetourEnStockAnimation from "../../Components/RetourEnStockAnimation";
+import DoneAnimation from "../../Components/DoneAnimation";
 import '../../App.css';
-import MiniDrawerfourisseur from "../../Components/SideBar";
+import MiniDrawerfourisseur from "../../Layouts/sideBarFournisseur";
 import React from "react";
+import { Box } from "@mui/material";
 
 const { Search } = Input;
 const { Title } = Typography;
 const { Option } = Select;
 
 function Homepage() {
+    const [statusDistribution, setStatusDistribution] = useState({});
     const [dateRange, setDateRange] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState("All");
     const [statusCounts, setStatusCounts] = useState({});
+    const [currentDate, setCurrentDate] = useState(new Date()); // État pour stocker la date système
 
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token'); // Récupérez le jeton d'accès depuis le stockage local (ou d'où vous l'avez stocké)
             try {
-                const response = await axios.get('http://localhost:3000/listerColis', {
+                const response = await axios.get('http://localhost:3000/listerColisFournisseur', {
                     headers: {
                         'x-access-token': localStorage.getItem('token'),
                       },
@@ -59,9 +62,19 @@ function Homepage() {
     };
 
 
-    const handleDateChange = (dates) => {
-        setDateRange(dates);
-    };
+    const handleSearch = (value) => {
+        setSearchQuery(value);
+        const filteredData = data.filter((item) =>
+          Object.values(item).some((val) => {
+            if (typeof val === "string") { // Vérifiez si val est une chaîne de caractères
+              return val.toLowerCase().includes(value.toLowerCase());
+            }
+            return false; // Si val n'est pas une chaîne de caractères, ne filtre pas
+          })
+        );
+        setFilteredData(filteredData);
+      };
+      
     const columns = [
 
         {
@@ -118,43 +131,58 @@ function Homepage() {
         }
     });
 
-    const handleSearch = (value) => {
-        setSearchQuery(value);
-        const filteredData = data.filter((item) =>
-            Object.values(item).some((val) => val.toLowerCase().includes(value.toLowerCase()))
-        );
-        setFilteredData(filteredData);
-    };
+    
 
     const handleStatusChange = (status) => {
-        setSelectedStatus(status);
-        setSearchQuery("");
-    };
+        setSearchQuery(""); // Réinitialise la recherche
+      
+        if (status === "All") {
+          setSelectedStatus("All");
+          setFilteredData(data); // Affiche toutes les colis
+        } else if (status === "created") {
+          setSelectedStatus("created");
+          const createdData = data.filter((item) => item.status === "Créé");
+          setFilteredData(createdData);
+        } else {
+          setSelectedStatus(status);
+          const filteredData = data.filter((item) => {
+            if (status === "All") {
+              return true;
+            } else {
+              return item.status === status;
+            }
+          });
+          setFilteredData(filteredData);
+        }
+      };
+      
+    
+    
+
+    
 
     function getStatusIcon(status) {
         switch (status) {
             case 'en stock':
-                return <FaCheck className="status-icon" />;
+                return <StockAnimation size={40} color="white" />;
             case 'en cours':
-                return <FaTruckLoading className="status-icon" />;
+                return <MyLottieAnimation size={40} color="white" />;
             case 'livré':
-                return <FaArchive className="status-icon" />;
+                return <PayedAnimation size={40} color="white" />;
             case 'en attente':
-                return <FaRedoAlt className="status-icon" />;
+                return <ReadyAnimation size={40} color="white"  />;
             case 'retour en stock':
-                return <FaUndo className="status-icon" />;
+                return <RetourEnStockAnimation size={40} color="white" />;
             case 'retour au fournisseur':
-                return <FaReply className="status-icon" />;
+                return <RetourAnimation size={40} color="white" />;
             case 'livré et payé':
-                return <FaArchive className="status-icon" />;
+                return <PayedAnimation size={40} color="white" />;
             case 'en pickup':
-                return <FaShoppingCart className="status-icon" />; // Shopping cart icon for Pickup status
+                return <LoadingAnimation size={40} color="white" />; // Shopping cart icon for Pickup status
             case 'annulé':
-                return <FaBan className="status-icon" />;
-            case 'Echange crée':
-                return <FaExchangeAlt className="status-icon" />;
-            case 'payé fournisseur':
-                return <FaExchangeAlt className="status-icon" />;
+                return <CancelledAnimation size={40} color="white" />;
+            case 'payé':    
+                return <DoneAnimation size={40} color="white" />
             default:
                 return null;
         }
@@ -170,19 +198,19 @@ function Homepage() {
             case 'livré':
                 return '#f44336'; // Rouge
             case 'en attente':
-                return '#fff236'; // Jaune pâle
+                return '#fff236 '; // Jaune pâle
             case 'retour en stock':
                 return '#7f00ff'; // Violet
             case 'retour au fournisseur':
-                return '#b71c1c'; // Rouge foncé
+                return '#2196f3'; // Rouge foncé
             case 'livré et payé':
                 return '#4caf50'; // Vert (même que En stock)
             case 'en pickup':
                 return '#ff9800'; // Orange
             case 'annulé':
                 return '#f44336'; // Rouge (même que Livrés)
-            case 'echange crée':
-                return '#2196f3'; // Bleu
+            case 'payé':
+                return '#FF8042'; // Bleu
             // case 'echange livré':
             //     return '#2196f3'; // Bleu (même que Echange crée)
             default:
@@ -190,6 +218,16 @@ function Homepage() {
         }
     };
 
+    useEffect(() => {
+        // Mettez à jour la date système toutes les secondes
+        const intervalId = setInterval(() => {
+            setCurrentDate(new Date());
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    
     return (
         <>
             <MiniDrawerfourisseur/>
@@ -198,41 +236,55 @@ function Homepage() {
             <Title level={2} className="centered">
                 Welcome to Delivery
             </Title>
-
             <div className="filter-container">
-                <DatePicker.RangePicker
-                    format="YYYY-MM-DD"
-                    placeholder={["From Date", "To Date"]}
-                    onChange={handleDateChange}
-                />
-                <Button
-                    type="primary"
-                    style={{ marginLeft: "10px" }}
-                    onClick={() => console.log("Apply clicked!")}
-                >
-                    Appliquer
-                </Button>
+            <p>Date : {currentDate.toLocaleString()}</p>
+
             </div>
 
-            <div className="button-section">
+            <div className="button-section" >
                 <Button
-                    size="large"
+                    
                     type="primary"
                     className="status-button"
                     onClick={() => handleStatusChange("created")}
-                >
+                    style={{ width: '150px', height: '50px' }} // Ajoutez ces styles pour fixer la taille du bouton
+    >            
                     <FaCheck className="button-icon" />
                     Créé
                 </Button>
-                <div className="status-button-group" >
-                    {['en attente', 'en stock', 'en cours', 'retour en stock', 'livré', 'en pickup',
-                      'annulé', 'retour au fournisseur', 'livré et payé', 'payé fournisseur'].map((status) => (
+                <Box sx={{ mx: '3%', mt: '3%', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', textAlign: 'center' ,marginLeft:'10px'}}>
+
+                <Grid sx={{ p: 3 }} item xs={12} container spacing={0.5} >
+                    
+                    
+                
+                    {['en attente' , 'en stock', 'en cours', 'retour en stock', 'livré', 'en pickup',
+                      'annulé', 'retour au fournisseur', 'livré et payé', 'payé'].map((status) => (
                         <Button
+                        className="status-button"
                             key={status}
+                            elevation={3}
+                            sx={{p: 1,
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: getStatusColor(status),
+                            transition: 'background-color 0.3s ease-in-out',
+                            cursor: 'pointer', // Add pointer cursor
+                            '&:hover': {
+                                boxShadow: 'inset 0 0 0 2em var(--hover)',
+                                transform: 'translateY(-0.25em)',
+                                backgroundColor: '#3D246C',
+                                cursor: 'pointer',
+                            },
+                        }} 
+                            item xs={2}
                             size="large"
                             type="primary"
-                            className={`status-button ${selectedStatus === status ? 'selected' : ''}`}
-                            style={{ background: getStatusColor(status), borderColor: getStatusColor(status) }}
+                            
+                            style={{width: '250px', height: '150px',background: getStatusColor(status), borderColor: getStatusColor(status) }}
                             onClick={() => handleStatusChange(status)}
                         >
                             <span className="status-icon">{getStatusIcon(status)}</span>
@@ -241,7 +293,10 @@ function Homepage() {
                         </Button>
 
                     ))}
-                </div>
+                    
+                
+                </Grid>
+                </Box>
 
             </div>
 

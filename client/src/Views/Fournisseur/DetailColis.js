@@ -6,6 +6,7 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
+import MiniDrawerfourisseur from '../../Layouts/sideBarColis';
 
 const DetailColis = ({ colisId, onClose }) => {
   const [historique, setHistorique] = useState([]);
@@ -27,7 +28,9 @@ const DetailColis = ({ colisId, onClose }) => {
   }, [colisId]);
 
   return (
-         
+    <>
+    <MiniDrawerfourisseur/>
+
     <Dialog open={true} onClose={onClose}>
         <DialogTitle><h2>Historique du colis</h2></DialogTitle>
         <DialogContent>
@@ -59,7 +62,7 @@ const DetailColis = ({ colisId, onClose }) => {
           <p>&copy; 2023 TinestDelivery</p>
         </footer>
     </Dialog>
-    
+</>    
   );
 };
 

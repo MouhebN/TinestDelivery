@@ -11,7 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import axios from 'axios';
-import MiniDrawerfourisseur from "../../Components/SideBar";
+import MiniDrawerfourisseur from "../../Layouts/sideBarFournisseur";
 
 const SuiviEchange = () => {
     const [trackingData, setTrackingData] = useState([]);

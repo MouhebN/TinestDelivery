@@ -13,7 +13,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
-import MiniDrawerfourisseur from '../../Components/SideBar';
+import MiniDrawerfourisseur from '../../Layouts/sideBarFournisseur';
 
 const ManageParcels = () => {
   const [colisList, setColisList] = useState([]);
